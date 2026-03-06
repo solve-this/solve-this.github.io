@@ -60,13 +60,18 @@ const canvasRef = ref(null)
 const fading = ref(false)
 const showSkip = ref(false)
 
-const CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789∑∞≈∂∇√∫ABCDEFabcdef{}[]<>/\\|!@#$%'
+// Characters: katakana for mystical Eastern feel, math symbols for AI depth, hex/code chars for hacker aesthetic
+const KATAKANA = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ'
+const MATH_SYMBOLS = '0123456789∑∞≈∂∇√∫'
+const CODE_CHARS = 'ABCDEFabcdef{}[]<>/\\|!@#$%'
+const CHARS = KATAKANA + MATH_SYMBOLS + CODE_CHARS
 const FONT_SIZE = 14
 const RAIN_MS = 3600
 const FADE_MS = 1600
 const TOTAL_MS = 5200
 const NORMAL_OPACITY_RANGE = 0.45
 const NORMAL_OPACITY_MIN = 0.1
+const INITIAL_SPREAD_ROWS = 60  // rows of random stagger so columns start at different times
 
 let rafId = null
 let startTime = null
@@ -74,7 +79,7 @@ let drops = []
 let skipTimeout = null
 
 function initDrops(cols) {
-  drops = Array.from({ length: cols }, () => -Math.floor(Math.random() * 60))
+  drops = Array.from({ length: cols }, () => -Math.floor(Math.random() * INITIAL_SPREAD_ROWS))
 }
 
 function draw(ctx, canvas, elapsed) {

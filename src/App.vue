@@ -43,6 +43,7 @@ const onScroll = () => { scrolled.value = window.scrollY > 40 }
 // ── Scroll reveal ─────────────────────────────────────────────────────────────
 let observer = null
 const skillsRevealed = ref(false)
+const REVEAL_THRESHOLD = 0.12  // 12% visible triggers reveal for a natural feel
 
 function setupObserver() {
   observer = new IntersectionObserver((entries) => {
@@ -53,7 +54,7 @@ function setupObserver() {
         observer.unobserve(entry.target)
       }
     })
-  }, { threshold: 0.12 }) // 12% visible triggers reveal for a natural feel
+  }, { threshold: REVEAL_THRESHOLD })
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
 }
 
@@ -91,7 +92,7 @@ onMounted(() => {
 onUnmounted(() => clearInterval(phaseTimer))
 
 // ── Spore particles ───────────────────────────────────────────────────────────
-// Duration: base 10s + up to 14s variation; delay spread up to 20s for staggered entry
+// Duration: base 10 seconds + up to 14 seconds variation; delay spread up to 20 seconds for staggered entry
 const SPORE_DUR_VARIATION = 14
 const SPORE_DUR_BASE = 10
 const SPORE_DELAY_SPREAD = 20
@@ -178,8 +179,8 @@ const services = [
 ]
 
 // ── 3D card tilt ──────────────────────────────────────────────────────────────
-const TILT_INTENSITY = 13   // degrees max tilt on each axis
-const CARD_PERSPECTIVE = 800 // px depth for 3D perspective
+const TILT_INTENSITY = 13        // degrees max tilt on each axis
+const CARD_PERSPECTIVE_PX = 800  // pixel depth for CSS perspective()
 const cardTilt = reactive({})
 function onCardMove(e, idx) {
   const r = e.currentTarget.getBoundingClientRect()
@@ -190,8 +191,8 @@ function onCardMove(e, idx) {
 function onCardLeave(idx) { delete cardTilt[idx] }
 function tiltTransform(idx) {
   const t = cardTilt[idx]
-  if (!t) return `perspective(${CARD_PERSPECTIVE}px) rotateX(0deg) rotateY(0deg)`
-  return `perspective(${CARD_PERSPECTIVE}px) rotateX(${t.rx}deg) rotateY(${t.ry}deg)`
+  if (!t) return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(0deg) rotateY(0deg)`
+  return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(${t.rx}deg) rotateY(${t.ry}deg)`
 }
 function tiltTransition(idx) {
   return cardTilt[idx] ? 'none' : 'transform 0.6s ease'
