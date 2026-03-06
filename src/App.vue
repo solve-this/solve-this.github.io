@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import MatrixRain from './components/MatrixRain.vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
@@ -9,90 +10,194 @@ import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
 
-// Header
+// ── Matrix loading ────────────────────────────────────────────────────────────
+const showMatrix = ref(true)
+const contentVisible = ref(false)
+
+function onMatrixDone() {
+  showMatrix.value = false
+  setTimeout(() => { contentVisible.value = true }, 80)
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+const onKeydown = (e) => {
+  if (e.key === 'Escape' && showMatrix.value) onMatrixDone()
+}
+
+// ── Custom cursor ─────────────────────────────────────────────────────────────
+const cursorX = ref(-200)
+const cursorY = ref(-200)
+const cursorHover = ref(false)
+
+const moveCursor = (e) => {
+  cursorX.value = e.clientX
+  cursorY.value = e.clientY
+  cursorHover.value = !!e.target.closest('a, button, input, textarea, select, [role=button], [tabindex]:not([tabindex="-1"]), .interactive')
+}
+
+// ── Scroll & header ───────────────────────────────────────────────────────────
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
-
 const onScroll = () => { scrolled.value = window.scrollY > 40 }
-onMounted(() => window.addEventListener('scroll', onScroll))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
+// ── Scroll reveal ─────────────────────────────────────────────────────────────
+let observer = null
+const skillsRevealed = ref(false)
+
+function setupObserver() {
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible')
+        if (entry.target.dataset.skills !== undefined) skillsRevealed.value = true
+        observer.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.12 }) // 12% visible triggers reveal for a natural feel
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+}
+
+watch(contentVisible, (val) => {
+  if (val) nextTick(setupObserver)
+})
+
+onMounted(() => {
+  window.addEventListener('mousemove', moveCursor)
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('keydown', onKeydown)
+})
+onUnmounted(() => {
+  window.removeEventListener('mousemove', moveCursor)
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('keydown', onKeydown)
+  if (observer) observer.disconnect()
+})
+
+// ── Nav ───────────────────────────────────────────────────────────────────────
 const navLinks = [
   { label: 'Services', href: '#services' },
   { label: 'Expertise', href: '#expertise' },
   { label: 'Contact', href: '#contact' },
 ]
 
-// Hero animation
+// ── Hero word cycle ───────────────────────────────────────────────────────────
 const PHASES = ['Logic', 'Architecture', 'Intelligence', 'Solution']
 const phaseIndex = ref(0)
 const currentPhase = computed(() => PHASES[phaseIndex.value])
-const heroVisible = ref(false)
-
 let phaseTimer = null
 onMounted(() => {
-  heroVisible.value = true
-  phaseTimer = setInterval(() => {
-    phaseIndex.value = (phaseIndex.value + 1) % PHASES.length
-  }, 2200)
+  phaseTimer = setInterval(() => { phaseIndex.value = (phaseIndex.value + 1) % PHASES.length }, 2200)
 })
 onUnmounted(() => clearInterval(phaseTimer))
 
-// Services
+// ── Spore particles ───────────────────────────────────────────────────────────
+// Duration: base 10s + up to 14s variation; delay spread up to 20s for staggered entry
+const SPORE_DUR_VARIATION = 14
+const SPORE_DUR_BASE = 10
+const SPORE_DELAY_SPREAD = 20
+const spores = Array.from({ length: 18 }, (_, i) => ({
+  id: i,
+  size: ((i % 4) * 0.7 + 1.5).toFixed(1),
+  left: ((i * 5.6 + 2) % 95).toFixed(1),
+  dur: (((i * 3.7) % SPORE_DUR_VARIATION) + SPORE_DUR_BASE).toFixed(1),
+  delay: -(((i * 2.9) % SPORE_DELAY_SPREAD)).toFixed(1),
+  drift: (((i % 5) - 2) * 25).toFixed(0),
+  color: i % 3 === 0 ? 'rgba(124,58,237,0.45)' : i % 3 === 1 ? 'rgba(245,158,11,0.38)' : 'rgba(217,119,6,0.28)',
+}))
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+const stats = [
+  { value: '50+', label: 'Production AI Systems' },
+  { value: '3B+', label: 'Tokens Processed Daily' },
+  { value: '99.9%', label: 'Uptime SLA' },
+  { value: '15ms', label: 'Avg Inference Latency' },
+]
+
+// ── Services ──────────────────────────────────────────────────────────────────
 const services = [
   {
     icon: 'pi pi-database',
     title: 'LLM Fine-tuning',
     description: 'Domain-specific model adaptation with LoRA, QLoRA, and RLHF pipelines. We transform general-purpose models into precision instruments for your industry.',
     tags: ['LoRA / QLoRA', 'RLHF', 'PEFT', 'DPO'],
-    accent: 'from-emerald-500/20 to-teal-500/10',
-    border: 'border-emerald-500/30',
-    iconBg: 'bg-emerald-500/10',
-    iconColor: 'text-emerald-400',
+    borderColor: 'rgba(245,158,11,0.35)',
+    iconBg: 'rgba(245,158,11,0.12)',
+    iconColor: '#f59e0b',
+    glowColor: 'rgba(245,158,11,0.12)',
+    tagStyle: 'background:rgba(245,158,11,0.1);color:#fbbf24;border:1px solid rgba(245,158,11,0.2)',
+    large: true,
   },
   {
     icon: 'pi pi-sitemap',
     title: 'Agentic Workflows',
     description: 'Multi-agent orchestration systems that reason, plan, and execute autonomously across complex business processes.',
     tags: ['LangGraph', 'AutoGen', 'CrewAI'],
-    accent: 'from-teal-500/20 to-cyan-500/10',
-    border: 'border-teal-500/30',
-    iconBg: 'bg-teal-500/10',
-    iconColor: 'text-teal-400',
+    borderColor: 'rgba(124,58,237,0.35)',
+    iconBg: 'rgba(124,58,237,0.12)',
+    iconColor: '#a78bfa',
+    glowColor: 'rgba(124,58,237,0.12)',
+    tagStyle: 'background:rgba(124,58,237,0.1);color:#c4b5fd;border:1px solid rgba(124,58,237,0.2)',
+    large: false,
   },
   {
     icon: 'pi pi-search',
     title: 'RAG Architecture',
     description: 'Enterprise-grade Retrieval-Augmented Generation systems combining semantic search with hybrid retrieval for hallucination-free intelligence.',
     tags: ['Vector DBs', 'Hybrid Search', 'Reranking'],
-    accent: 'from-cyan-500/20 to-blue-500/10',
-    border: 'border-cyan-500/30',
-    iconBg: 'bg-cyan-500/10',
-    iconColor: 'text-cyan-400',
+    borderColor: 'rgba(190,24,93,0.35)',
+    iconBg: 'rgba(190,24,93,0.1)',
+    iconColor: '#fb7185',
+    glowColor: 'rgba(190,24,93,0.1)',
+    tagStyle: 'background:rgba(190,24,93,0.1);color:#fda4af;border:1px solid rgba(190,24,93,0.2)',
+    large: false,
   },
   {
     icon: 'pi pi-chart-line',
     title: 'AI Strategy & Audit',
-    description: 'From proof-of-concept to production. We audit your AI stack, identify bottlenecks, and deliver a roadmap for scalable intelligence.',
+    description: 'From proof-of-concept to production. We audit your AI stack and deliver a roadmap for scalable intelligence.',
     tags: ['Architecture Review', 'Cost Optimization', 'MLOps'],
-    accent: 'from-blue-500/20 to-indigo-500/10',
-    border: 'border-blue-500/30',
-    iconBg: 'bg-blue-500/10',
-    iconColor: 'text-blue-400',
+    borderColor: 'rgba(234,88,12,0.35)',
+    iconBg: 'rgba(234,88,12,0.1)',
+    iconColor: '#fb923c',
+    glowColor: 'rgba(234,88,12,0.1)',
+    tagStyle: 'background:rgba(234,88,12,0.08);color:#fdba74;border:1px solid rgba(234,88,12,0.2)',
+    large: false,
   },
   {
     icon: 'pi pi-shield',
     title: 'AI Safety & Alignment',
     description: 'Production guardrails, red-teaming, and compliance frameworks ensuring your models behave reliably at scale.',
     tags: ['Guardrails', 'Red-teaming', 'Compliance'],
-    accent: 'from-violet-500/20 to-purple-500/10',
-    border: 'border-violet-500/30',
-    iconBg: 'bg-violet-500/10',
-    iconColor: 'text-violet-400',
+    borderColor: 'rgba(217,119,6,0.35)',
+    iconBg: 'rgba(217,119,6,0.1)',
+    iconColor: '#fcd34d',
+    glowColor: 'rgba(217,119,6,0.1)',
+    tagStyle: 'background:rgba(217,119,6,0.08);color:#fde68a;border:1px solid rgba(217,119,6,0.18)',
+    large: false,
   },
 ]
 
-// Expertise
+// ── 3D card tilt ──────────────────────────────────────────────────────────────
+const TILT_INTENSITY = 13   // degrees max tilt on each axis
+const CARD_PERSPECTIVE = 800 // px depth for 3D perspective
+const cardTilt = reactive({})
+function onCardMove(e, idx) {
+  const r = e.currentTarget.getBoundingClientRect()
+  const px = (e.clientX - r.left) / r.width - 0.5
+  const py = (e.clientY - r.top) / r.height - 0.5
+  cardTilt[idx] = { rx: py * -TILT_INTENSITY, ry: px * TILT_INTENSITY }
+}
+function onCardLeave(idx) { delete cardTilt[idx] }
+function tiltTransform(idx) {
+  const t = cardTilt[idx]
+  if (!t) return `perspective(${CARD_PERSPECTIVE}px) rotateX(0deg) rotateY(0deg)`
+  return `perspective(${CARD_PERSPECTIVE}px) rotateX(${t.rx}deg) rotateY(${t.ry}deg)`
+}
+function tiltTransition(idx) {
+  return cardTilt[idx] ? 'none' : 'transform 0.6s ease'
+}
+
+// ── Expertise ─────────────────────────────────────────────────────────────────
 const expertise = [
   { label: 'Transformer Architecture', level: 97 },
   { label: 'Prompt Engineering', level: 95 },
@@ -101,32 +206,12 @@ const expertise = [
   { label: 'Multi-modal AI', level: 88 },
   { label: 'AI Security', level: 85 },
 ]
+const techStack = ['PyTorch','HuggingFace','LangChain','LangGraph','OpenAI','Anthropic','Pinecone','Weaviate','FastAPI','Kubernetes','Ray','MLflow']
 
-const techStack = [
-  'PyTorch', 'HuggingFace', 'LangChain', 'LangGraph',
-  'OpenAI', 'Anthropic', 'Pinecone', 'Weaviate',
-  'FastAPI', 'Kubernetes', 'Ray', 'MLflow',
-]
-
-// Stats
-const stats = [
-  { value: '50+', label: 'Production AI Systems' },
-  { value: '3B+', label: 'Tokens Processed Daily' },
-  { value: '99.9%', label: 'Uptime SLA' },
-  { value: '15ms', label: 'Avg Inference Latency' },
-]
-
-// Lead Form
-const formData = ref({
-  name: '',
-  email: '',
-  company: '',
-  service: null,
-  message: '',
-})
+// ── Form ──────────────────────────────────────────────────────────────────────
+const formData = ref({ name: '', email: '', company: '', service: null, message: '' })
 const formSubmitting = ref(false)
 const formSubmitted = ref(false)
-
 const serviceOptions = [
   { label: 'LLM Fine-tuning', value: 'llm-finetuning' },
   { label: 'Agentic Workflows', value: 'agentic-workflows' },
@@ -135,44 +220,55 @@ const serviceOptions = [
   { label: 'AI Safety & Alignment', value: 'ai-safety' },
   { label: 'Other / Not sure yet', value: 'other' },
 ]
-
 const formValid = computed(() => {
   const { name, email, message } = formData.value
   return name.trim() && email.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && message.trim()
 })
-
 async function submitForm() {
   if (!formValid.value) return
   formSubmitting.value = true
   await new Promise(r => setTimeout(r, 1500))
   formSubmitting.value = false
   formSubmitted.value = true
-  toast.add({
-    severity: 'success',
-    summary: 'Message Received',
-    detail: "We'll be in touch within 24 hours.",
-    life: 5000,
-  })
+  toast.add({ severity: 'success', summary: 'Message Received', detail: "We'll be in touch within 24 hours.", life: 5000 })
 }
 </script>
 
 <template>
-  <div class="dark-mode min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
+  <!-- Matrix loading overlay -->
+  <Transition name="matrix-fade">
+    <MatrixRain v-if="showMatrix" @complete="onMatrixDone" />
+  </Transition>
+
+  <!-- Custom cursor — positioned at origin, moved via transform for GPU compositing -->
+  <div class="cursor-dot" :style="{ transform: `translate(calc(${cursorX}px - 50%), calc(${cursorY}px - 50%))` }" />
+  <div class="cursor-ring" :class="{ 'cursor-ring--hover': cursorHover }" :style="{ transform: `translate(calc(${cursorX}px - 50%), calc(${cursorY}px - 50%))` }" />
+
+  <!-- Page content -->
+  <div
+    class="min-h-screen overflow-x-hidden"
+    style="background:#0c0a09; color:#fef3c7"
+    :style="{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.8s ease' }"
+  >
     <Toast position="top-right" />
 
-    <!-- Sticky Header -->
+    <!-- ── HEADER ────────────────────────────────────────────────────────── -->
     <header
       class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      :class="[scrolled ? 'glass shadow-lg shadow-black/30' : 'bg-transparent']"
+      :class="scrolled ? 'glass shadow-lg' : ''"
+      :style="scrolled ? 'box-shadow: 0 4px 30px rgba(0,0,0,0.4)' : ''"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 sm:h-20">
-          <a href="#" class="flex items-center gap-2 group">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow">
-              <span class="text-slate-950 font-black text-sm">ST</span>
+          <a href="#" class="flex items-center gap-2.5 interactive group">
+            <div
+              class="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 animate-pulse-warm"
+              style="background:linear-gradient(135deg,#b45309,#d97706)"
+            >
+              <span class="font-black text-sm" style="color:#0c0a09">ST</span>
             </div>
-            <span class="font-bold text-xl tracking-tight">
-              solve<span class="text-emerald-400">.</span>this
+            <span class="font-bold text-xl tracking-tight" style="color:#fef3c7">
+              solve<span style="color:#a78bfa">.</span>this
             </span>
           </a>
 
@@ -181,40 +277,40 @@ async function submitForm() {
               v-for="link in navLinks"
               :key="link.href"
               :href="link.href"
-              class="text-sm font-medium text-slate-400 hover:text-emerald-400 transition-colors duration-200"
-            >
-              {{ link.label }}
-            </a>
+              class="text-sm font-medium transition-colors duration-200 interactive"
+              style="color:#a78060"
+              @mouseenter="(e) => e.target.style.color='#f59e0b'"
+              @mouseleave="(e) => e.target.style.color='#a78060'"
+            >{{ link.label }}</a>
             <a
               href="#contact"
-              class="btn-emerald px-5 py-2.5 rounded-lg text-sm font-semibold text-white shadow-md"
-            >
-              Get Started
-            </a>
+              class="btn-amber px-5 py-2.5 rounded-lg text-sm font-semibold interactive"
+              style="color:#0c0a09"
+            >Get Started</a>
           </nav>
 
           <button
-            class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            class="md:hidden p-2 rounded-lg transition-colors interactive"
+            style="color:#a78060"
             @click="mobileMenuOpen = !mobileMenuOpen"
             aria-label="Toggle menu"
           >
-            <i :class="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'" class="text-lg"></i>
+            <i :class="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'" class="text-lg" />
           </button>
         </div>
 
         <Transition name="slide-down">
-          <nav v-if="mobileMenuOpen" class="md:hidden pb-4 border-t border-slate-800/50 mt-2 pt-4">
+          <nav v-if="mobileMenuOpen" class="md:hidden pb-4 pt-3 border-t" style="border-color:rgba(245,158,11,0.1)">
             <div class="flex flex-col gap-3">
               <a
                 v-for="link in navLinks"
                 :key="link.href"
                 :href="link.href"
-                class="text-sm font-medium text-slate-400 hover:text-emerald-400 transition-colors py-2"
+                class="text-sm font-medium py-2 interactive"
+                style="color:#a78060"
                 @click="mobileMenuOpen = false"
-              >
-                {{ link.label }}
-              </a>
-              <a href="#contact" class="btn-emerald px-5 py-2.5 rounded-lg text-sm font-semibold text-white text-center mt-2" @click="mobileMenuOpen = false">
+              >{{ link.label }}</a>
+              <a href="#contact" class="btn-amber px-5 py-2.5 rounded-lg text-sm font-semibold text-center interactive" style="color:#0c0a09" @click="mobileMenuOpen = false">
                 Get Started
               </a>
             </div>
@@ -223,270 +319,268 @@ async function submitForm() {
       </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- ── HERO ──────────────────────────────────────────────────────────── -->
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <div class="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-emerald-500/5 blur-3xl pointer-events-none"></div>
-      <div class="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/5 blur-3xl pointer-events-none animate-float"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-emerald-500/5 animate-rotate-slow pointer-events-none"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-emerald-500/10 pointer-events-none" style="animation: rotate-slow 15s linear infinite reverse;"></div>
+      <!-- Warm mesh grid background -->
+      <div
+        class="absolute inset-0 pointer-events-none"
+        style="background-image: linear-gradient(rgba(245,158,11,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(245,158,11,0.025) 1px, transparent 1px); background-size: 60px 60px;"
+      />
+      <!-- Amber blob -->
+      <div
+        class="absolute pointer-events-none animate-float-a"
+        style="top:10%;right:10%;width:500px;height:500px;border-radius:50%;background:rgba(245,158,11,0.065);filter:blur(90px)"
+      />
+      <!-- Violet blob -->
+      <div
+        class="absolute pointer-events-none animate-float-b"
+        style="bottom:15%;left:5%;width:380px;height:380px;border-radius:50%;background:rgba(124,58,237,0.07);filter:blur(70px)"
+      />
+      <!-- Orbital rings -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none animate-rotate-slow" style="border:1px solid rgba(245,158,11,0.06)" />
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full pointer-events-none" style="border:1px solid rgba(124,58,237,0.07);animation:rotate-slow 16s linear infinite reverse" />
+
+      <!-- Spore particles -->
+      <div
+        v-for="s in spores"
+        :key="s.id"
+        class="spore"
+        :style="{
+          width: s.size + 'px',
+          height: s.size + 'px',
+          left: s.left + '%',
+          bottom: '5%',
+          animationDuration: s.dur + 's',
+          animationDelay: s.delay + 's',
+          background: s.color,
+          '--drift': s.drift + 'px',
+        }"
+      />
 
       <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        <!-- Badge -->
         <Transition name="fade-up" appear>
-          <div v-if="heroVisible" class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium text-emerald-400 border border-emerald-500/20 mb-8">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div v-if="contentVisible" class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium mb-8 interactive" style="color:#f59e0b;border-color:rgba(245,158,11,0.2)">
+            <span class="w-2 h-2 rounded-full animate-pulse" style="background:#f59e0b" />
             Elite AI Engineering Collective
           </div>
         </Transition>
 
+        <!-- H1 word cycle -->
         <Transition name="fade-up" appear>
-          <div v-if="heroVisible" class="mb-6">
-            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-4">
-              <span class="block text-slate-100">From</span>
-              <span class="block relative h-[1.15em] overflow-hidden">
+          <div v-if="contentVisible" class="mb-6">
+            <h1 class="font-black leading-[1.05] tracking-tight" style="font-size:clamp(3rem,8vw,5.5rem)">
+              <span class="block" style="color:#fef3c7">From</span>
+              <span class="block relative overflow-hidden" style="height:1.15em">
                 <Transition name="word-swap" mode="out-in">
                   <span :key="currentPhase" class="gradient-text block">{{ currentPhase }}</span>
                 </Transition>
               </span>
-              <span class="block text-slate-100">to <span class="gradient-text">Solution</span></span>
+              <span class="block" style="color:#fef3c7">to <span class="gradient-text">Solution</span></span>
             </h1>
           </div>
         </Transition>
 
+        <!-- Tagline -->
         <Transition name="fade-up" appear>
-          <p v-if="heroVisible" class="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed" style="animation-delay: 0.2s">
+          <p v-if="contentVisible" class="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style="color:#a78060;animation-delay:0.2s">
             We don't just prompt; we architect.
-            <strong class="text-slate-200"> solve.this</strong> bridges the gap between AI hype and
-            <em class="text-emerald-400 not-italic font-semibold">production-grade intelligence</em>.
+            <strong style="color:#fef3c7"> solve.this</strong> bridges the gap between AI hype and
+            <em class="not-italic font-semibold" style="color:#f59e0b">production-grade intelligence</em>.
           </p>
         </Transition>
 
+        <!-- CTAs -->
         <Transition name="fade-up" appear>
-          <div v-if="heroVisible" class="flex flex-col sm:flex-row gap-4 justify-center items-center" style="animation-delay: 0.4s">
+          <div v-if="contentVisible" class="flex flex-col sm:flex-row gap-4 justify-center items-center" style="animation-delay:0.4s">
             <a
               href="#contact"
-              class="btn-emerald px-8 py-4 rounded-xl text-base font-bold text-white shadow-lg shadow-emerald-500/20 w-full sm:w-auto"
+              class="btn-amber px-8 py-4 rounded-xl text-base font-bold w-full sm:w-auto interactive"
+              style="color:#0c0a09"
             >
               <span class="flex items-center gap-2 justify-center">
-                <i class="pi pi-arrow-right text-sm"></i>
+                <i class="pi pi-arrow-right text-sm" />
                 Start a Project
               </span>
             </a>
             <a
               href="#services"
-              class="px-8 py-4 rounded-xl text-base font-semibold text-slate-300 border border-slate-700 hover:border-emerald-500/40 hover:text-white transition-all duration-300 w-full sm:w-auto text-center"
+              class="px-8 py-4 rounded-xl text-base font-semibold border transition-all duration-300 w-full sm:w-auto text-center interactive"
+              style="color:#a78060;border-color:rgba(120,90,60,0.4)"
+              @mouseenter="(e) => { e.currentTarget.style.borderColor='rgba(245,158,11,0.4)'; e.currentTarget.style.color='#fef3c7' }"
+              @mouseleave="(e) => { e.currentTarget.style.borderColor='rgba(120,90,60,0.4)'; e.currentTarget.style.color='#a78060' }"
             >
               Explore Services
             </a>
           </div>
         </Transition>
 
-        <div class="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <!-- Stats -->
+        <div class="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
           <div
             v-for="stat in stats"
             :key="stat.label"
-            class="bento-card glass rounded-2xl p-5 border border-slate-800/60"
+            class="reveal glass rounded-2xl p-5 interactive"
+            style="border:1px solid rgba(245,158,11,0.12)"
           >
             <div class="text-2xl sm:text-3xl font-black gradient-text mb-1">{{ stat.value }}</div>
-            <div class="text-xs text-slate-500 font-medium">{{ stat.label }}</div>
+            <div class="text-xs font-medium" style="color:#6b5040">{{ stat.label }}</div>
           </div>
         </div>
       </div>
 
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-600 animate-bounce">
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce" style="color:#4a3828">
         <span class="text-xs uppercase tracking-widest">Scroll</span>
-        <i class="pi pi-chevron-down text-sm"></i>
+        <i class="pi pi-chevron-down text-sm" />
       </div>
     </section>
 
-    <!-- Services Bento Grid -->
+    <!-- ── SERVICES ───────────────────────────────────────────────────────── -->
     <section id="services" class="py-24 sm:py-32 relative">
-      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-950/5 to-transparent pointer-events-none"></div>
+      <div class="absolute inset-0 pointer-events-none" style="background:linear-gradient(to bottom, transparent, rgba(124,58,237,0.03), transparent)" />
+
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 mb-4">
-            <i class="pi pi-th-large text-xs"></i>
+        <div class="text-center mb-16 reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
+            <i class="pi pi-th-large text-xs" />
             What We Build
           </div>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-100 mb-4">
+          <h2 class="font-black mb-4" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
             AI Services,<br class="hidden sm:block"> <span class="gradient-text">Production-Ready</span>
           </h2>
-          <p class="text-slate-400 max-w-xl mx-auto text-lg">
+          <p style="color:#a78060;max-width:38rem;margin:0 auto;font-size:1.1rem">
             End-to-end AI engineering from architecture to deployment.
           </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div
-            class="bento-card glass rounded-2xl p-6 sm:p-8 border sm:col-span-2 lg:col-span-2"
-            :class="['bg-gradient-to-br ' + services[0].accent, services[0].border]"
+            v-for="(svc, idx) in services"
+            :key="svc.title"
+            class="bento-card glass rounded-2xl p-6 reveal interactive"
+            :class="[svc.large ? 'sm:col-span-2 lg:col-span-2' : '', svc.large ? 'sm:p-8' : '']"
+            :style="{
+              border: '1px solid ' + svc.borderColor,
+              boxShadow: '0 0 25px ' + svc.glowColor,
+              transform: tiltTransform(idx),
+              transition: tiltTransition(idx),
+            }"
+            @mousemove="onCardMove($event, idx)"
+            @mouseleave="onCardLeave(idx)"
           >
-            <div class="flex flex-col h-full min-h-[240px]">
-              <div :class="['w-12 h-12 rounded-xl flex items-center justify-center mb-6', services[0].iconBg]">
-                <i :class="[services[0].icon, 'text-2xl', services[0].iconColor]"></i>
+            <div class="flex flex-col" :class="svc.large ? 'min-h-[220px]' : 'min-h-[200px]'">
+              <div
+                class="rounded-xl flex items-center justify-center mb-5 flex-shrink-0"
+                :class="svc.large ? 'w-12 h-12' : 'w-10 h-10'"
+                :style="{ background: svc.iconBg }"
+              >
+                <i :class="[svc.icon, svc.large ? 'text-2xl' : 'text-xl']" :style="{ color: svc.iconColor }" />
               </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-slate-100 mb-3">{{ services[0].title }}</h3>
-              <p class="text-slate-400 text-sm leading-relaxed flex-1 mb-6">{{ services[0].description }}</p>
+              <h3 :class="svc.large ? 'text-xl sm:text-2xl' : 'text-base'" class="font-bold mb-2" style="color:#fef3c7">{{ svc.title }}</h3>
+              <p class="leading-relaxed flex-1 mb-4" :class="svc.large ? 'text-sm' : 'text-xs'" style="color:#7a6050">{{ svc.description }}</p>
               <div class="flex flex-wrap gap-2">
                 <span
-                  v-for="tag in services[0].tags"
+                  v-for="tag in svc.tags"
                   :key="tag"
-                  class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                  class="px-2.5 py-1 rounded-full text-xs font-medium"
+                  :style="svc.tagStyle"
                 >{{ tag }}</span>
               </div>
-            </div>
-          </div>
-
-          <div
-            class="bento-card glass rounded-2xl p-6 border"
-            :class="['bg-gradient-to-br ' + services[1].accent, services[1].border]"
-          >
-            <div :class="['w-12 h-12 rounded-xl flex items-center justify-center mb-5', services[1].iconBg]">
-              <i :class="[services[1].icon, 'text-2xl', services[1].iconColor]"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-100 mb-2">{{ services[1].title }}</h3>
-            <p class="text-slate-400 text-sm leading-relaxed mb-4">{{ services[1].description }}</p>
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="tag in services[1].tags"
-                :key="tag"
-                class="px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/10 text-teal-400 border border-teal-500/20"
-              >{{ tag }}</span>
-            </div>
-          </div>
-
-          <div
-            class="bento-card glass rounded-2xl p-6 border"
-            :class="['bg-gradient-to-br ' + services[2].accent, services[2].border]"
-          >
-            <div :class="['w-12 h-12 rounded-xl flex items-center justify-center mb-5', services[2].iconBg]">
-              <i :class="[services[2].icon, 'text-2xl', services[2].iconColor]"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-100 mb-2">{{ services[2].title }}</h3>
-            <p class="text-slate-400 text-sm leading-relaxed mb-4">{{ services[2].description }}</p>
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="tag in services[2].tags"
-                :key="tag"
-                class="px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
-              >{{ tag }}</span>
-            </div>
-          </div>
-
-          <div
-            class="bento-card glass rounded-2xl p-6 border"
-            :class="['bg-gradient-to-br ' + services[3].accent, services[3].border]"
-          >
-            <div :class="['w-10 h-10 rounded-xl flex items-center justify-center mb-4', services[3].iconBg]">
-              <i :class="[services[3].icon, 'text-xl', services[3].iconColor]"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-100 mb-2">{{ services[3].title }}</h3>
-            <p class="text-slate-400 text-xs leading-relaxed mb-3">{{ services[3].description }}</p>
-            <div class="flex flex-wrap gap-1.5">
-              <span
-                v-for="tag in services[3].tags"
-                :key="tag"
-                class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20"
-              >{{ tag }}</span>
-            </div>
-          </div>
-
-          <div
-            class="bento-card glass rounded-2xl p-6 border"
-            :class="['bg-gradient-to-br ' + services[4].accent, services[4].border]"
-          >
-            <div :class="['w-10 h-10 rounded-xl flex items-center justify-center mb-4', services[4].iconBg]">
-              <i :class="[services[4].icon, 'text-xl', services[4].iconColor]"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-100 mb-2">{{ services[4].title }}</h3>
-            <p class="text-slate-400 text-xs leading-relaxed mb-3">{{ services[4].description }}</p>
-            <div class="flex flex-wrap gap-1.5">
-              <span
-                v-for="tag in services[4].tags"
-                :key="tag"
-                class="px-2 py-0.5 rounded-full text-xs font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20"
-              >{{ tag }}</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Expertise Section -->
+    <!-- ── EXPERTISE ──────────────────────────────────────────────────────── -->
     <section id="expertise" class="py-24 sm:py-32 relative overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-emerald-950/10 to-slate-950 pointer-events-none"></div>
+      <div class="absolute inset-0 pointer-events-none" style="background:linear-gradient(135deg,#0c0a09,rgba(124,58,237,0.04),#0c0a09)" />
+
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-16">
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 mb-4">
-            <i class="pi pi-star text-xs"></i>
+        <div class="text-center mb-16 reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
+            <i class="pi pi-star text-xs" />
             Technical Depth
           </div>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-100 mb-4">
+          <h2 class="font-black mb-4" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
             Built by <span class="gradient-text">Experts</span>,<br class="hidden sm:block"> Not Prompt Engineers
           </h2>
-          <p class="text-slate-400 max-w-xl mx-auto text-lg">
+          <p style="color:#a78060;max-width:38rem;margin:0 auto;font-size:1.1rem">
             Deep research backgrounds, production scars, and an obsession with getting it right.
           </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div class="space-y-6">
-            <h3 class="text-lg font-bold text-slate-200 mb-6">Core Competencies</h3>
-            <div v-for="skill in expertise" :key="skill.label" class="group">
+          <!-- Skill bars -->
+          <div class="space-y-6 reveal" data-skills>
+            <h3 class="font-bold mb-6" style="color:#fef3c7;font-size:1.1rem">Core Competencies</h3>
+            <div v-for="(skill, idx) in expertise" :key="skill.label" class="group">
               <div class="flex justify-between items-center mb-2">
-                <span class="text-sm font-medium text-slate-300 group-hover:text-emerald-400 transition-colors">{{ skill.label }}</span>
+                <span class="text-sm font-medium transition-colors" style="color:#c8a070">{{ skill.label }}</span>
                 <span class="text-sm font-bold gradient-text">{{ skill.level }}%</span>
               </div>
-              <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-2 rounded-full" style="background:rgba(60,40,20,0.6)">
                 <div
-                  class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-1000 ease-out"
-                  :style="{ width: skill.level + '%' }"
-                ></div>
+                  class="h-full rounded-full"
+                  style="background:linear-gradient(90deg,#b45309,#f59e0b,#fbbf24)"
+                  :style="{
+                    width: skillsRevealed ? skill.level + '%' : '0%',
+                    transition: 'width 1.1s ease-out',
+                    transitionDelay: idx * 0.1 + 's',
+                  }"
+                />
               </div>
             </div>
           </div>
 
-          <div class="space-y-8">
+          <!-- Tech stack + why -->
+          <div class="space-y-8 reveal delay-2">
             <div>
-              <h3 class="text-lg font-bold text-slate-200 mb-5">Our Tech Stack</h3>
+              <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">Our Tech Stack</h3>
               <div class="flex flex-wrap gap-2.5">
                 <span
                   v-for="tech in techStack"
                   :key="tech"
-                  class="bento-card px-3.5 py-2 rounded-xl text-sm font-medium glass border border-slate-700/50 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/30 transition-colors cursor-default"
+                  class="px-3.5 py-2 rounded-xl text-sm font-medium glass border transition-all duration-200 interactive"
+                  style="color:#c8a070;border-color:rgba(120,80,40,0.35)"
+                  @mouseenter="(e) => { e.target.style.color='#f59e0b'; e.target.style.borderColor='rgba(245,158,11,0.35)' }"
+                  @mouseleave="(e) => { e.target.style.color='#c8a070'; e.target.style.borderColor='rgba(120,80,40,0.35)' }"
                 >{{ tech }}</span>
               </div>
             </div>
 
             <div class="space-y-4">
-              <h3 class="text-lg font-bold text-slate-200 mb-5">Why solve.this?</h3>
+              <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">Why solve.this?</h3>
               <div
                 v-for="(prop, i) in [
                   { icon: 'pi pi-verified', text: 'Production-first thinking — no toy demos' },
-                  { icon: 'pi pi-lock', text: 'On-prem deployment and data sovereignty options' },
-                  { icon: 'pi pi-clock', text: 'Typical delivery: 4-8 weeks from kickoff' },
+                  { icon: 'pi pi-lock', text: 'On-prem deployment & data sovereignty options' },
+                  { icon: 'pi pi-clock', text: 'Typical delivery: 4–8 weeks from kickoff' },
                   { icon: 'pi pi-users', text: 'Senior engineers only — no juniors on your project' },
                 ]"
                 :key="i"
                 class="flex items-start gap-3"
               >
-                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <i :class="[prop.icon, 'text-sm text-emerald-400']"></i>
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(245,158,11,0.1)">
+                  <i :class="[prop.icon, 'text-sm']" style="color:#f59e0b" />
                 </div>
-                <span class="text-slate-400 text-sm leading-relaxed">{{ prop.text }}</span>
+                <span class="text-sm leading-relaxed" style="color:#a78060">{{ prop.text }}</span>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Scrolling marquee -->
         <div class="mt-20 relative overflow-hidden">
-          <div class="flex gap-8 animate-marquee whitespace-nowrap">
+          <div class="flex gap-8 marquee whitespace-nowrap">
             <span
               v-for="(tech, i) in [...techStack, ...techStack]"
               :key="'m-' + i"
-              class="inline-flex items-center gap-2 text-slate-600 font-medium text-sm"
+              class="inline-flex items-center gap-2 text-sm font-medium"
+              style="color:rgba(120,80,40,0.5)"
             >
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/40"></span>
+              <span class="w-1.5 h-1.5 rounded-full" style="background:rgba(245,158,11,0.35)" />
               {{ tech }}
             </span>
           </div>
@@ -494,21 +588,23 @@ async function submitForm() {
       </div>
     </section>
 
-    <!-- Lead Form Section -->
+    <!-- ── CONTACT ────────────────────────────────────────────────────────── -->
     <section id="contact" class="py-24 sm:py-32 relative">
-      <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/10 to-transparent pointer-events-none"></div>
+      <div class="absolute inset-0 pointer-events-none" style="background:linear-gradient(to top,rgba(245,158,11,0.04),transparent)" />
+
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 mb-6">
-              <i class="pi pi-envelope text-xs"></i>
+          <!-- Left copy -->
+          <div class="reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
+              <i class="pi pi-envelope text-xs" />
               Let's Build Together
             </div>
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-100 mb-6 leading-tight">
+            <h2 class="font-black mb-6 leading-tight" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
               Ready to Ship <span class="gradient-text">Real AI</span>?
             </h2>
-            <p class="text-slate-400 text-lg leading-relaxed mb-8">
-              Tell us about your challenge. We'll respond within 24 hours with a technical assessment and proposal — no generic sales pitch, just direct engineering insight.
+            <p class="text-lg leading-relaxed mb-8" style="color:#a78060">
+              Tell us about your challenge. We'll respond within 24 hours with a technical assessment — no generic sales pitch, just direct engineering insight.
             </p>
             <div class="space-y-4">
               <div
@@ -520,90 +616,75 @@ async function submitForm() {
                 :key="i"
                 class="flex items-center gap-3"
               >
-                <i :class="[signal.icon, 'text-emerald-500 text-sm flex-shrink-0']"></i>
-                <span class="text-slate-400 text-sm">{{ signal.text }}</span>
+                <i :class="[signal.icon, 'text-sm flex-shrink-0']" style="color:#d97706" />
+                <span class="text-sm" style="color:#a78060">{{ signal.text }}</span>
               </div>
             </div>
-            <blockquote class="mt-10 pl-5 border-l-2 border-emerald-500/40">
-              <p class="text-slate-300 italic text-sm leading-relaxed">
+            <blockquote class="mt-10 pl-5" style="border-left:2px solid rgba(245,158,11,0.35)">
+              <p class="italic text-sm leading-relaxed" style="color:#c8a070">
                 "solve.this cut our RAG hallucination rate from 23% to 1.8% in six weeks. They understood our domain immediately."
               </p>
-              <footer class="mt-3 text-xs text-slate-500 font-medium">— Head of AI, Fortune 500 Financial Services</footer>
+              <footer class="mt-3 text-xs font-medium" style="color:#6b5040">— Head of AI, Fortune 500 Financial Services</footer>
             </blockquote>
           </div>
 
-          <div>
+          <!-- Right form -->
+          <div class="reveal delay-2">
             <Transition name="fade-in" mode="out-in">
               <div
                 v-if="formSubmitted"
                 key="success"
-                class="glass rounded-2xl p-8 sm:p-10 border border-emerald-500/20 text-center"
+                class="glass rounded-2xl p-8 sm:p-10 text-center"
+                style="border:1px solid rgba(245,158,11,0.2)"
               >
-                <div class="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
-                  <i class="pi pi-check text-3xl text-emerald-400"></i>
+                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-warm" style="background:rgba(245,158,11,0.1)">
+                  <i class="pi pi-check text-3xl" style="color:#f59e0b" />
                 </div>
-                <h3 class="text-xl font-bold text-slate-100 mb-2">Message Sent!</h3>
-                <p class="text-slate-400 text-sm">We'll review your project and get back to you within 24 hours.</p>
+                <h3 class="text-xl font-bold mb-2" style="color:#fef3c7">Message Sent!</h3>
+                <p class="text-sm" style="color:#a78060">We'll review your project and get back to you within 24 hours.</p>
               </div>
 
               <form
                 v-else
                 key="form"
-                class="glass rounded-2xl p-6 sm:p-8 border border-slate-800/60 space-y-5"
+                class="glass rounded-2xl p-6 sm:p-8 space-y-5"
+                style="border:1px solid rgba(120,80,40,0.3)"
                 @submit.prevent="submitForm"
                 novalidate
               >
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Name *</label>
+                    <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Name *</label>
                     <InputText v-model="formData.name" placeholder="Ada Lovelace" class="w-full" />
                   </div>
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Email *</label>
+                    <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Email *</label>
                     <InputText v-model="formData.email" type="email" placeholder="ada@company.ai" class="w-full" />
                   </div>
                 </div>
-
                 <div class="flex flex-col gap-2">
-                  <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Company</label>
+                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Company</label>
                   <InputText v-model="formData.company" placeholder="Acme Corp" class="w-full" />
                 </div>
-
                 <div class="flex flex-col gap-2">
-                  <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Service Needed</label>
-                  <Select
-                    v-model="formData.service"
-                    :options="serviceOptions"
-                    option-label="label"
-                    option-value="value"
-                    placeholder="Select a service..."
-                    class="w-full"
-                  />
+                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Service Needed</label>
+                  <Select v-model="formData.service" :options="serviceOptions" option-label="label" option-value="value" placeholder="Select a service..." class="w-full" />
                 </div>
-
                 <div class="flex flex-col gap-2">
-                  <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Project Brief *</label>
-                  <Textarea
-                    v-model="formData.message"
-                    placeholder="Describe your AI challenge, current stack, and timeline..."
-                    rows="4"
-                    class="w-full resize-none"
-                  />
+                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Project Brief *</label>
+                  <Textarea v-model="formData.message" placeholder="Describe your AI challenge, current stack, and timeline..." rows="4" class="w-full resize-none" />
                 </div>
-
                 <Button
                   type="submit"
                   :loading="formSubmitting"
                   :disabled="!formValid"
-                  class="w-full btn-emerald !py-3.5 !text-base !font-bold !text-white !border-0 !rounded-xl"
                   label="Send Project Brief"
                   icon="pi pi-send"
                   icon-pos="right"
+                  class="w-full btn-amber interactive"
+                  style="padding:0.875rem 1rem;font-weight:700;font-size:1rem;color:#0c0a09;border:none;border-radius:0.75rem"
                 />
-
-                <p class="text-xs text-slate-600 text-center">
-                  By submitting you agree to our privacy policy. No spam, ever.
-                </p>
+                <p class="text-xs text-center" style="color:#4a3828">By submitting you agree to our privacy policy. No spam, ever.</p>
               </form>
             </Transition>
           </div>
@@ -611,32 +692,26 @@ async function submitForm() {
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800/60 py-12">
+    <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+    <footer class="py-12" style="border-top:1px solid rgba(120,80,40,0.2)">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div class="flex items-center gap-3">
-            <div class="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center shadow-sm shadow-emerald-500/30">
-              <span class="text-slate-950 font-black text-xs">ST</span>
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#b45309,#d97706)">
+              <span class="font-black text-xs" style="color:#0c0a09">ST</span>
             </div>
             <div>
-              <div class="font-bold text-sm">solve<span class="text-emerald-400">.</span>this</div>
-              <div class="text-xs text-slate-600">Elite AI Engineering</div>
+              <div class="font-bold text-sm" style="color:#fef3c7">solve<span style="color:#a78bfa">.</span>this</div>
+              <div class="text-xs" style="color:#4a3828">Elite AI Engineering</div>
             </div>
           </div>
           <nav class="flex items-center gap-6">
-            <a
-              v-for="link in navLinks"
-              :key="link.href"
-              :href="link.href"
-              class="text-xs text-slate-600 hover:text-emerald-400 transition-colors"
-            >
-              {{ link.label }}
-            </a>
+            <a v-for="link in navLinks" :key="link.href" :href="link.href" class="text-xs interactive" style="color:#4a3828"
+               @mouseenter="(e) => e.target.style.color='#f59e0b'"
+               @mouseleave="(e) => e.target.style.color='#4a3828'"
+            >{{ link.label }}</a>
           </nav>
-          <p class="text-xs text-slate-700">
-            &copy; 2025 solve.this. All rights reserved.
-          </p>
+          <p class="text-xs" style="color:#3a2818">&copy; 2025 solve.this. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -644,132 +719,97 @@ async function submitForm() {
 </template>
 
 <style scoped>
-.word-swap-enter-active,
-.word-swap-leave-active {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* Matrix overlay fade out */
+.matrix-fade-leave-active { transition: opacity 0.8s ease; }
+.matrix-fade-leave-to { opacity: 0; }
+
+/* Custom cursor — anchored at top-left origin, positioned via transform for GPU compositing */
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 8px #f59e0b, 0 0 16px rgba(245,158,11,0.4);
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
 }
-.word-swap-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(245,158,11,0.5);
+  pointer-events: none;
+  z-index: 9998;
+  transition: width 0.25s, height 0.25s, border-color 0.25s;
+  will-change: transform;
 }
-.word-swap-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
+.cursor-ring--hover {
+  width: 48px; height: 48px;
+  border-color: rgba(245,158,11,0.85);
 }
 
-.fade-up-enter-active {
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.fade-up-enter-from {
-  opacity: 0;
-  transform: translateY(30px);
+/* Hero word swap */
+.word-swap-enter-active, .word-swap-leave-active { transition: all 0.45s cubic-bezier(0.4,0,0.2,1); }
+.word-swap-enter-from { opacity: 0; transform: translateY(22px); }
+.word-swap-leave-to { opacity: 0; transform: translateY(-22px); }
+
+/* Fade-up for hero elements */
+.fade-up-enter-active { transition: all 0.9s cubic-bezier(0.4,0,0.2,1); }
+.fade-up-enter-from { opacity: 0; transform: translateY(32px); }
+
+/* Fade-in for form toggle */
+.fade-in-enter-active, .fade-in-leave-active { transition: opacity 0.5s ease; }
+.fade-in-enter-from, .fade-in-leave-to { opacity: 0; }
+
+/* Mobile menu slide */
+.slide-down-enter-active, .slide-down-leave-active { transition: all 0.3s ease; }
+.slide-down-enter-from, .slide-down-leave-to { opacity: 0; transform: translateY(-12px); }
+
+/* Marquee */
+.marquee { animation: marquee-anim 28s linear infinite; }
+@keyframes marquee-anim { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Hide cursor on touch */
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none; }
 }
 
-.fade-in-enter-active,
-.fade-in-leave-active {
-  transition: opacity 0.5s ease;
-}
-.fade-in-enter-from,
-.fade-in-leave-to {
-  opacity: 0;
-}
-
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.3s ease;
-}
-.slide-down-enter-from,
-.slide-down-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 20s linear infinite;
-}
-
+/* PrimeVue overrides */
 :deep(.p-inputtext),
 :deep(.p-textarea) {
-  background: rgba(15, 23, 42, 0.8) !important;
-  border: 1px solid rgba(71, 85, 105, 0.4) !important;
-  color: #f1f5f9 !important;
+  background: rgba(20,16,10,0.9) !important;
+  border: 1px solid rgba(217,119,6,0.25) !important;
+  color: #fef3c7 !important;
   border-radius: 10px !important;
   font-size: 0.875rem !important;
   padding: 0.75rem 1rem !important;
   transition: border-color 0.2s, box-shadow 0.2s !important;
 }
-:deep(.p-inputtext::placeholder),
-:deep(.p-textarea::placeholder) {
-  color: #475569 !important;
-}
-:deep(.p-inputtext:enabled:focus),
-:deep(.p-textarea:enabled:focus) {
-  border-color: rgba(16, 185, 129, 0.6) !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+:deep(.p-inputtext::placeholder), :deep(.p-textarea::placeholder) { color: rgba(167,128,96,0.6) !important; }
+:deep(.p-inputtext:enabled:focus), :deep(.p-textarea:enabled:focus) {
+  border-color: rgba(245,158,11,0.6) !important;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.1) !important;
   outline: none !important;
 }
 :deep(.p-select) {
-  background: rgba(15, 23, 42, 0.8) !important;
-  border: 1px solid rgba(71, 85, 105, 0.4) !important;
-  border-radius: 10px !important;
-  color: #f1f5f9 !important;
-}
-:deep(.p-select .p-select-label) {
-  color: #f1f5f9 !important;
-  font-size: 0.875rem !important;
-  padding: 0.75rem 1rem !important;
-}
-:deep(.p-select.p-placeholder .p-select-label) {
-  color: #475569 !important;
-}
-:deep(.p-select:not(.p-disabled):hover) {
-  border-color: rgba(16, 185, 129, 0.4) !important;
-}
-:deep(.p-select:not(.p-disabled).p-focus) {
-  border-color: rgba(16, 185, 129, 0.6) !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-}
-:deep(.p-select-overlay) {
-  background: #0f172a !important;
-  border: 1px solid rgba(71, 85, 105, 0.4) !important;
+  background: rgba(20,16,10,0.9) !important;
+  border: 1px solid rgba(217,119,6,0.25) !important;
   border-radius: 10px !important;
 }
-:deep(.p-select-option) {
-  color: #cbd5e1 !important;
-  font-size: 0.875rem !important;
-  padding: 0.625rem 1rem !important;
-}
-:deep(.p-select-option:hover),
-:deep(.p-select-option.p-focus) {
-  background: rgba(16, 185, 129, 0.1) !important;
-  color: #10b981 !important;
-}
-:deep(.p-select-option.p-select-option-selected) {
-  background: rgba(16, 185, 129, 0.15) !important;
-  color: #10b981 !important;
-}
-:deep(.p-button) {
-  transition: all 0.3s ease !important;
-}
-:deep(.p-button:disabled) {
-  opacity: 0.4 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-}
-:deep(.p-toast .p-toast-message) {
-  background: #0f172a !important;
-  border: 1px solid rgba(16, 185, 129, 0.3) !important;
-  border-radius: 12px !important;
-}
-:deep(.p-toast .p-toast-message-text) {
-  color: #f1f5f9 !important;
-}
-:deep(.p-toast .p-toast-summary) {
-  color: #10b981 !important;
-  font-weight: 700 !important;
-}
+:deep(.p-select .p-select-label) { color: #fef3c7 !important; font-size: 0.875rem !important; padding: 0.75rem 1rem !important; }
+:deep(.p-select.p-placeholder .p-select-label) { color: rgba(167,128,96,0.6) !important; }
+:deep(.p-select:not(.p-disabled):hover) { border-color: rgba(245,158,11,0.45) !important; }
+:deep(.p-select:not(.p-disabled).p-focus) { border-color: rgba(245,158,11,0.6) !important; box-shadow: 0 0 0 3px rgba(245,158,11,0.1) !important; }
+:deep(.p-select-overlay) { background: #1a1208 !important; border: 1px solid rgba(217,119,6,0.25) !important; border-radius: 10px !important; }
+:deep(.p-select-option) { color: #d4b896 !important; font-size: 0.875rem !important; padding: 0.625rem 1rem !important; }
+:deep(.p-select-option:hover), :deep(.p-select-option.p-focus) { background: rgba(245,158,11,0.1) !important; color: #f59e0b !important; }
+:deep(.p-select-option.p-select-option-selected) { background: rgba(245,158,11,0.15) !important; color: #fbbf24 !important; }
+:deep(.p-button) { transition: all 0.3s ease !important; }
+:deep(.p-button:disabled) { opacity: 0.4 !important; cursor: not-allowed !important; }
+:deep(.p-toast .p-toast-message) { background: #1a1208 !important; border: 1px solid rgba(245,158,11,0.3) !important; border-radius: 12px !important; }
+:deep(.p-toast .p-toast-message-text) { color: #fef3c7 !important; }
+:deep(.p-toast .p-toast-summary) { color: #f59e0b !important; font-weight: 700 !important; }
 </style>
