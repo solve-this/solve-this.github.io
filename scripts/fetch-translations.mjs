@@ -64,7 +64,7 @@ console.log('[fetch-translations] 🚀  Fetching translations from Google Sheets
 
 try {
   await getSpreadSheetData(
-    ['i18n'], // sheet title must match the Google Spreadsheet tab name
+    ['i18n', 'landingPage'], // both sheet tabs in the Google Spreadsheet
     {
       rowLimit: 200,
       waitSeconds: 1,
