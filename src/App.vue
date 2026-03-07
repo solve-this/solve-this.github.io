@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import MatrixRain from './components/MatrixRain.vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -7,8 +8,15 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { availableLocales } from './i18n/index.js'
 
 const toast = useToast()
+const { t, locale } = useI18n()
+
+// ── Dynamic page title ────────────────────────────────────────────────────────
+watch(locale, () => {
+  document.title = t('meta.title')
+}, { immediate: true })
 
 // ── Matrix loading ────────────────────────────────────────────────────────────
 const showMatrix = ref(true)
@@ -75,19 +83,29 @@ onUnmounted(() => {
 })
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
-const navLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Expertise', href: '#expertise' },
-  { label: 'Contact', href: '#contact' },
-]
+const navLinks = computed(() => [
+  { label: t('nav.services'), href: '#services' },
+  { label: t('nav.expertise'), href: '#expertise' },
+  { label: t('nav.contact'), href: '#contact' },
+])
+
+/** Returns the display label for a locale code (e.g. 'en' → 'EN') */
+function localeName(loc) {
+  return t(`lang.${loc}`, loc.toUpperCase())
+}
 
 // ── Hero word cycle ───────────────────────────────────────────────────────────
-const PHASES = ['Logic', 'Architecture', 'Intelligence', 'Solution']
 const phaseIndex = ref(0)
-const currentPhase = computed(() => PHASES[phaseIndex.value])
+const PHASES = computed(() => [
+  t('hero.phase_logic'),
+  t('hero.phase_architecture'),
+  t('hero.phase_intelligence'),
+  t('hero.phase_solution'),
+])
+const currentPhase = computed(() => PHASES.value[phaseIndex.value])
 let phaseTimer = null
 onMounted(() => {
-  phaseTimer = setInterval(() => { phaseIndex.value = (phaseIndex.value + 1) % PHASES.length }, 2200)
+  phaseTimer = setInterval(() => { phaseIndex.value = (phaseIndex.value + 1) % PHASES.value.length }, 2200)
 })
 onUnmounted(() => clearInterval(phaseTimer))
 
@@ -107,19 +125,19 @@ const spores = Array.from({ length: 18 }, (_, i) => ({
 }))
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
-const stats = [
-  { value: '50+', label: 'Production AI Systems' },
-  { value: '3B+', label: 'Tokens Processed Daily' },
-  { value: '99.9%', label: 'Uptime SLA' },
-  { value: '15ms', label: 'Avg Inference Latency' },
-]
+const stats = computed(() => [
+  { value: '50+', label: t('hero.stat_production_ai') },
+  { value: '3B+', label: t('hero.stat_tokens_daily') },
+  { value: '99.9%', label: t('hero.stat_uptime') },
+  { value: '15ms', label: t('hero.stat_latency') },
+])
 
 // ── Services ──────────────────────────────────────────────────────────────────
-const services = [
+const services = computed(() => [
   {
     icon: 'pi pi-database',
-    title: 'LLM Fine-tuning',
-    description: 'Domain-specific model adaptation with LoRA, QLoRA, and RLHF pipelines. We transform general-purpose models into precision instruments for your industry.',
+    title: t('services.llm_title'),
+    description: t('services.llm_description'),
     tags: ['LoRA / QLoRA', 'RLHF', 'PEFT', 'DPO'],
     borderColor: 'rgba(245,158,11,0.35)',
     iconBg: 'rgba(245,158,11,0.12)',
@@ -130,8 +148,8 @@ const services = [
   },
   {
     icon: 'pi pi-sitemap',
-    title: 'Agentic Workflows',
-    description: 'Multi-agent orchestration systems that reason, plan, and execute autonomously across complex business processes.',
+    title: t('services.agentic_title'),
+    description: t('services.agentic_description'),
     tags: ['LangGraph', 'AutoGen', 'CrewAI'],
     borderColor: 'rgba(124,58,237,0.35)',
     iconBg: 'rgba(124,58,237,0.12)',
@@ -142,8 +160,8 @@ const services = [
   },
   {
     icon: 'pi pi-search',
-    title: 'RAG Architecture',
-    description: 'Enterprise-grade Retrieval-Augmented Generation systems combining semantic search with hybrid retrieval for hallucination-free intelligence.',
+    title: t('services.rag_title'),
+    description: t('services.rag_description'),
     tags: ['Vector DBs', 'Hybrid Search', 'Reranking'],
     borderColor: 'rgba(190,24,93,0.35)',
     iconBg: 'rgba(190,24,93,0.1)',
@@ -154,8 +172,8 @@ const services = [
   },
   {
     icon: 'pi pi-chart-line',
-    title: 'AI Strategy & Audit',
-    description: 'From proof-of-concept to production. We audit your AI stack and deliver a roadmap for scalable intelligence.',
+    title: t('services.strategy_title'),
+    description: t('services.strategy_description'),
     tags: ['Architecture Review', 'Cost Optimization', 'MLOps'],
     borderColor: 'rgba(234,88,12,0.35)',
     iconBg: 'rgba(234,88,12,0.1)',
@@ -166,8 +184,8 @@ const services = [
   },
   {
     icon: 'pi pi-shield',
-    title: 'AI Safety & Alignment',
-    description: 'Production guardrails, red-teaming, and compliance frameworks ensuring your models behave reliably at scale.',
+    title: t('services.safety_title'),
+    description: t('services.safety_description'),
     tags: ['Guardrails', 'Red-teaming', 'Compliance'],
     borderColor: 'rgba(217,119,6,0.35)',
     iconBg: 'rgba(217,119,6,0.1)',
@@ -176,7 +194,7 @@ const services = [
     tagStyle: 'background:rgba(217,119,6,0.08);color:#fde68a;border:1px solid rgba(217,119,6,0.18)',
     large: false,
   },
-]
+])
 
 // ── 3D card tilt ──────────────────────────────────────────────────────────────
 const TILT_INTENSITY = 13        // degrees max tilt on each axis
@@ -190,37 +208,52 @@ function onCardMove(e, idx) {
 }
 function onCardLeave(idx) { delete cardTilt[idx] }
 function tiltTransform(idx) {
-  const t = cardTilt[idx]
-  if (!t) return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(0deg) rotateY(0deg)`
-  return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(${t.rx}deg) rotateY(${t.ry}deg)`
+  const tilt = cardTilt[idx]
+  if (!tilt) return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(0deg) rotateY(0deg)`
+  return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
 }
 function tiltTransition(idx) {
   return cardTilt[idx] ? 'none' : 'transform 0.6s ease'
 }
 
 // ── Expertise ─────────────────────────────────────────────────────────────────
-const expertise = [
-  { label: 'Transformer Architecture', level: 97 },
-  { label: 'Prompt Engineering', level: 95 },
-  { label: 'Vector Databases', level: 93 },
-  { label: 'MLOps & Deployment', level: 91 },
-  { label: 'Multi-modal AI', level: 88 },
-  { label: 'AI Security', level: 85 },
-]
+const expertise = computed(() => [
+  { label: t('expertise.skill_transformer'), level: 97 },
+  { label: t('expertise.skill_prompt'), level: 95 },
+  { label: t('expertise.skill_vector'), level: 93 },
+  { label: t('expertise.skill_mlops'), level: 91 },
+  { label: t('expertise.skill_multimodal'), level: 88 },
+  { label: t('expertise.skill_ai_security'), level: 85 },
+])
 const techStack = ['PyTorch','HuggingFace','LangChain','LangGraph','OpenAI','Anthropic','Pinecone','Weaviate','FastAPI','Kubernetes','Ray','MLflow']
+
+// ── Why props ────────────────────────────────────────────────────────────────
+const whyProps = computed(() => [
+  { icon: 'pi pi-verified', text: t('expertise.why_production') },
+  { icon: 'pi pi-lock', text: t('expertise.why_onprem') },
+  { icon: 'pi pi-clock', text: t('expertise.why_delivery') },
+  { icon: 'pi pi-users', text: t('expertise.why_senior') },
+])
+
+// ── Contact signals ───────────────────────────────────────────────────────────
+const contactSignals = computed(() => [
+  { icon: 'pi pi-check-circle', text: t('contact.signal_consultation') },
+  { icon: 'pi pi-check-circle', text: t('contact.signal_nda') },
+  { icon: 'pi pi-check-circle', text: t('contact.signal_contract') },
+])
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 const formData = ref({ name: '', email: '', company: '', service: null, message: '' })
 const formSubmitting = ref(false)
 const formSubmitted = ref(false)
-const serviceOptions = [
-  { label: 'LLM Fine-tuning', value: 'llm-finetuning' },
-  { label: 'Agentic Workflows', value: 'agentic-workflows' },
-  { label: 'RAG Architecture', value: 'rag-architecture' },
-  { label: 'AI Strategy & Audit', value: 'ai-strategy' },
-  { label: 'AI Safety & Alignment', value: 'ai-safety' },
-  { label: 'Other / Not sure yet', value: 'other' },
-]
+const serviceOptions = computed(() => [
+  { label: t('contact.service_llm'), value: 'llm-finetuning' },
+  { label: t('contact.service_agentic'), value: 'agentic-workflows' },
+  { label: t('contact.service_rag'), value: 'rag-architecture' },
+  { label: t('contact.service_strategy'), value: 'ai-strategy' },
+  { label: t('contact.service_safety'), value: 'ai-safety' },
+  { label: t('contact.service_other'), value: 'other' },
+])
 const formValid = computed(() => {
   const { name, email, message } = formData.value
   return name.trim() && email.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && message.trim()
@@ -231,7 +264,7 @@ async function submitForm() {
   await new Promise(r => setTimeout(r, 1500))
   formSubmitting.value = false
   formSubmitted.value = true
-  toast.add({ severity: 'success', summary: 'Message Received', detail: "We'll be in touch within 24 hours.", life: 5000 })
+  toast.add({ severity: 'success', summary: t('toast.summary'), detail: t('toast.detail'), life: 5000 })
 }
 </script>
 
@@ -283,11 +316,22 @@ async function submitForm() {
               @mouseenter="(e) => e.target.style.color='#f59e0b'"
               @mouseleave="(e) => e.target.style.color='#a78060'"
             >{{ link.label }}</a>
+            <!-- Language switcher (desktop) -->
+            <div class="flex items-center gap-1" style="color:#6b5040">
+              <template v-for="(loc, idx) in availableLocales" :key="loc">
+                <button
+                  class="text-xs font-semibold uppercase tracking-wider interactive transition-colors duration-200"
+                  :style="locale === loc ? 'color:#f59e0b' : 'color:#6b5040'"
+                  @click="locale = loc"
+                >{{ localeName(loc) }}</button>
+                <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
+              </template>
+            </div>
             <a
               href="#contact"
               class="btn-amber px-5 py-2.5 rounded-lg text-sm font-semibold interactive"
               style="color:#0c0a09"
-            >Get Started</a>
+            >{{ t('nav.get_started') }}</a>
           </nav>
 
           <button
@@ -311,8 +355,19 @@ async function submitForm() {
                 style="color:#a78060"
                 @click="mobileMenuOpen = false"
               >{{ link.label }}</a>
+              <!-- Language switcher (mobile) -->
+              <div class="flex items-center gap-2 py-1">
+                <template v-for="(loc, idx) in availableLocales" :key="loc">
+                  <button
+                    class="text-xs font-semibold uppercase tracking-wider interactive transition-colors duration-200"
+                    :style="locale === loc ? 'color:#f59e0b' : 'color:#6b5040'"
+                    @click="locale = loc"
+                  >{{ localeName(loc) }}</button>
+                  <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
+                </template>
+              </div>
               <a href="#contact" class="btn-amber px-5 py-2.5 rounded-lg text-sm font-semibold text-center interactive" style="color:#0c0a09" @click="mobileMenuOpen = false">
-                Get Started
+                {{ t('nav.get_started') }}
               </a>
             </div>
           </nav>
@@ -363,7 +418,7 @@ async function submitForm() {
         <Transition name="fade-up" appear>
           <div v-if="contentVisible" class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium mb-8 interactive" style="color:#f59e0b;border-color:rgba(245,158,11,0.2)">
             <span class="w-2 h-2 rounded-full animate-pulse" style="background:#f59e0b" />
-            Elite AI Engineering Collective
+            {{ t('hero.badge') }}
           </div>
         </Transition>
 
@@ -371,24 +426,33 @@ async function submitForm() {
         <Transition name="fade-up" appear>
           <div v-if="contentVisible" class="mb-6">
             <h1 class="font-black leading-[1.05] tracking-tight" style="font-size:clamp(3rem,8vw,5.5rem)">
-              <span class="block" style="color:#fef3c7">From</span>
+              <span class="block" style="color:#fef3c7">{{ t('hero.heading_from') }}</span>
               <span class="block relative overflow-hidden" style="height:1.15em">
                 <Transition name="word-swap" mode="out-in">
                   <span :key="currentPhase" class="gradient-text block">{{ currentPhase }}</span>
                 </Transition>
               </span>
-              <span class="block" style="color:#fef3c7">to <span class="gradient-text">Solution</span></span>
+              <span class="block" style="color:#fef3c7">{{ t('hero.heading_to') }} <span class="gradient-text">{{ t('hero.phase_solution') }}</span></span>
             </h1>
           </div>
         </Transition>
 
         <!-- Tagline -->
         <Transition name="fade-up" appear>
-          <p v-if="contentVisible" class="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style="color:#a78060;animation-delay:0.2s">
-            We don't just prompt; we architect.
-            <strong style="color:#fef3c7"> solve.this</strong> bridges the gap between AI hype and
-            <em class="not-italic font-semibold" style="color:#f59e0b">production-grade intelligence</em>.
-          </p>
+          <i18n-t
+            v-if="contentVisible"
+            keypath="hero.tagline"
+            tag="p"
+            class="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+            style="color:#a78060;animation-delay:0.2s"
+          >
+            <template #brand>
+              <strong style="color:#fef3c7"> {{ t('hero.tagline_brand') }}</strong>
+            </template>
+            <template #highlight>
+              <em class="not-italic font-semibold" style="color:#f59e0b">{{ t('hero.tagline_highlight') }}</em>
+            </template>
+          </i18n-t>
         </Transition>
 
         <!-- CTAs -->
@@ -401,7 +465,7 @@ async function submitForm() {
             >
               <span class="flex items-center gap-2 justify-center">
                 <i class="pi pi-arrow-right text-sm" />
-                Start a Project
+                {{ t('hero.cta_primary') }}
               </span>
             </a>
             <a
@@ -411,7 +475,7 @@ async function submitForm() {
               @mouseenter="(e) => { e.currentTarget.style.borderColor='rgba(245,158,11,0.4)'; e.currentTarget.style.color='#fef3c7' }"
               @mouseleave="(e) => { e.currentTarget.style.borderColor='rgba(120,90,60,0.4)'; e.currentTarget.style.color='#a78060' }"
             >
-              Explore Services
+              {{ t('hero.cta_secondary') }}
             </a>
           </div>
         </Transition>
@@ -432,7 +496,7 @@ async function submitForm() {
 
       <!-- Scroll indicator -->
       <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce" style="color:#4a3828">
-        <span class="text-xs uppercase tracking-widest">Scroll</span>
+        <span class="text-xs uppercase tracking-widest">{{ t('hero.scroll') }}</span>
         <i class="pi pi-chevron-down text-sm" />
       </div>
     </section>
@@ -445,13 +509,13 @@ async function submitForm() {
         <div class="text-center mb-16 reveal">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
             <i class="pi pi-th-large text-xs" />
-            What We Build
+            {{ t('services.badge') }}
           </div>
           <h2 class="font-black mb-4" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
-            AI Services,<br class="hidden sm:block"> <span class="gradient-text">Production-Ready</span>
+            {{ t('services.heading') }}<br class="hidden sm:block"> <span class="gradient-text">{{ t('services.heading_highlight') }}</span>
           </h2>
           <p style="color:#a78060;max-width:38rem;margin:0 auto;font-size:1.1rem">
-            End-to-end AI engineering from architecture to deployment.
+            {{ t('services.description') }}
           </p>
         </div>
 
@@ -502,20 +566,20 @@ async function submitForm() {
         <div class="text-center mb-16 reveal">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
             <i class="pi pi-star text-xs" />
-            Technical Depth
+            {{ t('expertise.badge') }}
           </div>
           <h2 class="font-black mb-4" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
-            Built by <span class="gradient-text">Experts</span>,<br class="hidden sm:block"> Not Prompt Engineers
+            {{ t('expertise.heading') }} <span class="gradient-text">{{ t('expertise.heading_highlight') }}</span>,<br class="hidden sm:block"> {{ t('expertise.heading_suffix') }}
           </h2>
           <p style="color:#a78060;max-width:38rem;margin:0 auto;font-size:1.1rem">
-            Deep research backgrounds, production scars, and an obsession with getting it right.
+            {{ t('expertise.description') }}
           </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <!-- Skill bars -->
           <div class="space-y-6 reveal" data-skills>
-            <h3 class="font-bold mb-6" style="color:#fef3c7;font-size:1.1rem">Core Competencies</h3>
+            <h3 class="font-bold mb-6" style="color:#fef3c7;font-size:1.1rem">{{ t('expertise.core_competencies') }}</h3>
             <div v-for="(skill, idx) in expertise" :key="skill.label" class="group">
               <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-medium transition-colors" style="color:#c8a070">{{ skill.label }}</span>
@@ -538,7 +602,7 @@ async function submitForm() {
           <!-- Tech stack + why -->
           <div class="space-y-8 reveal delay-2">
             <div>
-              <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">Our Tech Stack</h3>
+              <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">{{ t('expertise.our_tech_stack') }}</h3>
               <div class="flex flex-wrap gap-2.5">
                 <span
                   v-for="tech in techStack"
@@ -552,14 +616,9 @@ async function submitForm() {
             </div>
 
             <div class="space-y-4">
-              <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">Why solve.this?</h3>
+              <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">{{ t('expertise.why_title') }}</h3>
               <div
-                v-for="(prop, i) in [
-                  { icon: 'pi pi-verified', text: 'Production-first thinking — no toy demos' },
-                  { icon: 'pi pi-lock', text: 'On-prem deployment & data sovereignty options' },
-                  { icon: 'pi pi-clock', text: 'Typical delivery: 4–8 weeks from kickoff' },
-                  { icon: 'pi pi-users', text: 'Senior engineers only — no juniors on your project' },
-                ]"
+                v-for="(prop, i) in whyProps"
                 :key="i"
                 class="flex items-start gap-3"
               >
@@ -599,21 +658,17 @@ async function submitForm() {
           <div class="reveal">
             <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
               <i class="pi pi-envelope text-xs" />
-              Let's Build Together
+              {{ t('contact.badge') }}
             </div>
             <h2 class="font-black mb-6 leading-tight" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
-              Ready to Ship <span class="gradient-text">Real AI</span>?
+              {{ t('contact.heading') }} <span class="gradient-text">{{ t('contact.heading_highlight') }}</span>?
             </h2>
             <p class="text-lg leading-relaxed mb-8" style="color:#a78060">
-              Tell us about your challenge. We'll respond within 24 hours with a technical assessment — no generic sales pitch, just direct engineering insight.
+              {{ t('contact.description') }}
             </p>
             <div class="space-y-4">
               <div
-                v-for="(signal, i) in [
-                  { icon: 'pi pi-check-circle', text: 'Free initial technical consultation' },
-                  { icon: 'pi pi-check-circle', text: 'NDA signed before any discussion' },
-                  { icon: 'pi pi-check-circle', text: 'Fixed-price milestone contracts' },
-                ]"
+                v-for="(signal, i) in contactSignals"
                 :key="i"
                 class="flex items-center gap-3"
               >
@@ -623,9 +678,9 @@ async function submitForm() {
             </div>
             <blockquote class="mt-10 pl-5" style="border-left:2px solid rgba(245,158,11,0.35)">
               <p class="italic text-sm leading-relaxed" style="color:#c8a070">
-                "solve.this cut our RAG hallucination rate from 23% to 1.8% in six weeks. They understood our domain immediately."
+                "{{ t('contact.quote_text') }}"
               </p>
-              <footer class="mt-3 text-xs font-medium" style="color:#6b5040">— Head of AI, Fortune 500 Financial Services</footer>
+              <footer class="mt-3 text-xs font-medium" style="color:#6b5040">{{ t('contact.quote_author') }}</footer>
             </blockquote>
           </div>
 
@@ -641,8 +696,8 @@ async function submitForm() {
                 <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-warm" style="background:rgba(245,158,11,0.1)">
                   <i class="pi pi-check text-3xl" style="color:#f59e0b" />
                 </div>
-                <h3 class="text-xl font-bold mb-2" style="color:#fef3c7">Message Sent!</h3>
-                <p class="text-sm" style="color:#a78060">We'll review your project and get back to you within 24 hours.</p>
+                <h3 class="text-xl font-bold mb-2" style="color:#fef3c7">{{ t('contact.success_title') }}</h3>
+                <p class="text-sm" style="color:#a78060">{{ t('contact.success_desc') }}</p>
               </div>
 
               <form
@@ -655,37 +710,37 @@ async function submitForm() {
               >
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Name *</label>
-                    <InputText v-model="formData.name" placeholder="Ada Lovelace" class="w-full" />
+                    <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">{{ t('contact.form_name') }}</label>
+                    <InputText v-model="formData.name" :placeholder="t('contact.form_name_placeholder')" class="w-full" />
                   </div>
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Email *</label>
-                    <InputText v-model="formData.email" type="email" placeholder="ada@company.ai" class="w-full" />
+                    <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">{{ t('contact.form_email') }}</label>
+                    <InputText v-model="formData.email" type="email" :placeholder="t('contact.form_email_placeholder')" class="w-full" />
                   </div>
                 </div>
                 <div class="flex flex-col gap-2">
-                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Company</label>
-                  <InputText v-model="formData.company" placeholder="Acme Corp" class="w-full" />
+                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">{{ t('contact.form_company') }}</label>
+                  <InputText v-model="formData.company" :placeholder="t('contact.form_company_placeholder')" class="w-full" />
                 </div>
                 <div class="flex flex-col gap-2">
-                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Service Needed</label>
-                  <Select v-model="formData.service" :options="serviceOptions" option-label="label" option-value="value" placeholder="Select a service..." class="w-full" />
+                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">{{ t('contact.form_service') }}</label>
+                  <Select v-model="formData.service" :options="serviceOptions" option-label="label" option-value="value" :placeholder="t('contact.form_service_placeholder')" class="w-full" />
                 </div>
                 <div class="flex flex-col gap-2">
-                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">Project Brief *</label>
-                  <Textarea v-model="formData.message" placeholder="Describe your AI challenge, current stack, and timeline..." rows="4" class="w-full resize-none" />
+                  <label class="text-xs font-semibold uppercase tracking-wider" style="color:#a78060">{{ t('contact.form_message') }}</label>
+                  <Textarea v-model="formData.message" :placeholder="t('contact.form_message_placeholder')" rows="4" class="w-full resize-none" />
                 </div>
                 <Button
                   type="submit"
                   :loading="formSubmitting"
                   :disabled="!formValid"
-                  label="Send Project Brief"
+                  :label="t('contact.form_submit')"
                   icon="pi pi-send"
                   icon-pos="right"
                   class="w-full btn-amber interactive"
                   style="padding:0.875rem 1rem;font-weight:700;font-size:1rem;color:#0c0a09;border:none;border-radius:0.75rem"
                 />
-                <p class="text-xs text-center" style="color:#4a3828">By submitting you agree to our privacy policy. No spam, ever.</p>
+                <p class="text-xs text-center" style="color:#4a3828">{{ t('contact.form_privacy') }}</p>
               </form>
             </Transition>
           </div>
@@ -703,7 +758,7 @@ async function submitForm() {
             </div>
             <div>
               <div class="font-bold text-sm" style="color:#fef3c7">solve<span style="color:#a78bfa">.</span>this</div>
-              <div class="text-xs" style="color:#4a3828">Elite AI Engineering</div>
+              <div class="text-xs" style="color:#4a3828">{{ t('footer.tagline') }}</div>
             </div>
           </div>
           <nav class="flex items-center gap-6">
@@ -712,7 +767,7 @@ async function submitForm() {
                @mouseleave="(e) => e.target.style.color='#4a3828'"
             >{{ link.label }}</a>
           </nav>
-          <p class="text-xs" style="color:#3a2818">&copy; 2025 solve.this. All rights reserved.</p>
+          <p class="text-xs" style="color:#3a2818">{{ t('footer.copyright') }}</p>
         </div>
       </div>
     </footer>
