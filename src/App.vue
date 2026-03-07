@@ -89,6 +89,11 @@ const navLinks = computed(() => [
   { label: t('nav.contact'), href: '#contact' },
 ])
 
+/** Returns the display label for a locale code (e.g. 'en' → 'EN') */
+function localeName(loc) {
+  return t(`lang.${loc}`, loc.toUpperCase())
+}
+
 // ── Hero word cycle ───────────────────────────────────────────────────────────
 const phaseIndex = ref(0)
 const PHASES = computed(() => [
@@ -203,9 +208,9 @@ function onCardMove(e, idx) {
 }
 function onCardLeave(idx) { delete cardTilt[idx] }
 function tiltTransform(idx) {
-  const t = cardTilt[idx]
-  if (!t) return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(0deg) rotateY(0deg)`
-  return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(${t.rx}deg) rotateY(${t.ry}deg)`
+  const tilt = cardTilt[idx]
+  if (!tilt) return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(0deg) rotateY(0deg)`
+  return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
 }
 function tiltTransition(idx) {
   return cardTilt[idx] ? 'none' : 'transform 0.6s ease'
@@ -318,7 +323,7 @@ async function submitForm() {
                   class="text-xs font-semibold uppercase tracking-wider interactive transition-colors duration-200"
                   :style="locale === loc ? 'color:#f59e0b' : 'color:#6b5040'"
                   @click="locale = loc"
-                >{{ t('lang.' + loc) }}</button>
+                >{{ localeName(loc) }}</button>
                 <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
               </template>
             </div>
@@ -357,7 +362,7 @@ async function submitForm() {
                     class="text-xs font-semibold uppercase tracking-wider interactive transition-colors duration-200"
                     :style="locale === loc ? 'color:#f59e0b' : 'color:#6b5040'"
                     @click="locale = loc"
-                  >{{ t('lang.' + loc) }}</button>
+                  >{{ localeName(loc) }}</button>
                   <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
                 </template>
               </div>
