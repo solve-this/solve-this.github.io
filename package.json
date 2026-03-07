@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "fetch-translations": "node scripts/fetch-translations.mjs",
+    "sync-translations": "node scripts/sync-translations.mjs",
     "prebuild": "npm run fetch-translations"
   },
   "dependencies": {

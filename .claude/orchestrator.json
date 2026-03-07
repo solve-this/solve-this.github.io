@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "project": "solve-this.github.io",
+  "description": "Landing page for solve.this — Elite AI Engineering Collective. Vue 3 + Tailwind CSS v4, i18n via @el-j/google-sheet-translations.",
+
+  "stack": {
+    "framework": "Vue 3 Composition API",
+    "styling": "Tailwind CSS v4 via @tailwindcss/vite",
+    "ui": "PrimeVue 4 (Aura theme)",
+    "i18n": "vue-i18n v9 + @el-j/google-sheet-translations v0.0.2",
+    "build": "Vite 7",
+    "deploy": "GitHub Pages via deploy.yml"
+  },
+
+  "theme": {
+    "background": "#0c0a09",
+    "text": "#fef3c7",
+    "primary": "amber (#f59e0b / #fbbf24)",
+    "secondary": "violet (#7c3aed)",
+    "tertiary": "rose (#be185d)"
+  },
+
+  "i18n": {
+    "spreadsheet": "https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g",
+    "sheets": {
+      "i18n":       "nav.*, lang.*, toast.*  — app-level UI labels",
+      "landingPage": "hero.*, services.*, expertise.*, contact.*, footer.*, meta.*  — page content"
+    },
+    "locales": ["en", "de", "fr", "es"],
+    "fallback_locale": "en",
+    "source_of_truth": "src/i18n/translations/en.json",
+    "workflow": {
+      "add_key":     "1. Add t('key') in App.vue  2. Add English value in en.json under correct namespace  3. npm run sync-translations  4. commit",
+      "fetch_only":  "npm run fetch-translations  (read-only, safe for CI)",
+      "full_sync":   "npm run sync-translations   (pushes new keys + enables autoTranslate)"
+    }
+  },
+
+  "agents": {
+    "translations": {
+      "file": ".claude/agents/translations.md",
+      "triggers": ["add translation key", "new copy", "update text", "add language"],
+      "commands": ["sync-translations", "fetch-translations", "new-key"]
+    },
+    "content": {
+      "file": ".claude/agents/content.md",
+      "triggers": ["update content", "new section", "change copy", "rewrite"],
+      "commands": ["new-key"]
+    },
+    "deploy": {
+      "file": ".claude/agents/deploy.md",
+      "triggers": ["deploy", "release", "push to main", "CI failing"]
+    }
+  },
+
+  "commands": {
+    "sync-translations":  ".claude/commands/sync-translations.md",
+    "fetch-translations": ".claude/commands/fetch-translations.md",
+    "new-key":            ".claude/commands/new-key.md"
+  },
+
+  "files": {
+    "app":             "src/App.vue",
+    "i18n_setup":      "src/i18n/index.js",
+    "translations_en": "src/i18n/translations/en.json",
+    "fetch_script":    "scripts/fetch-translations.mjs",
+    "sync_script":     "scripts/sync-translations.mjs",
+    "deploy_workflow": ".github/workflows/deploy.yml"
+  }
+}

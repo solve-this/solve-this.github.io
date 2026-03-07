@@ -57,26 +57,21 @@ function expandDotKeys(flat) {
 }
 
 /**
- * Normalises a raw translation file (package output) into vue-i18n message format.
+ * Normalises a raw translation file into vue-i18n message format.
  *
- * The @el-j/google-sheet-translations package writes one key per sheet tab, e.g.:
+ * The @el-j/google-sheet-translations package writes one key per sheet tab:
  *   { "i18n": { "nav.services": "Services", ... }, "landingPage": { "hero.badge": "…", ... } }
  *
- * This function merges ALL sheet-namespace objects into one flat map so that
- * every dot-notation key from every sheet is available to t().
- *
- * Also handles a plain flat map:  { "nav.services": "Services", … }
+ * Merge all sheet objects into one flat map, then expand dot-notation to nested objects.
  */
 function normalise(raw) {
   const data = raw.default ?? raw
-  // Detect whether the file uses the sheet-namespace wrapper format:
-  // every value must itself be a plain object (not a string) for it to be a namespace map.
-  const isNamespaceMap = Object.values(data).every(
-    (v) => v !== null && typeof v === 'object' && !Array.isArray(v)
-  )
-  const flat = isNamespaceMap
-    ? Object.values(data).reduce((acc, sheetObj) => Object.assign(acc, sheetObj), {})
-    : data
+  const flat = Object.values(data).reduce((acc, sheet) => {
+    if (sheet && typeof sheet === 'object' && !Array.isArray(sheet)) {
+      Object.assign(acc, sheet)
+    }
+    return acc
+  }, {})
   return expandDotKeys(flat)
 }
 

@@ -5,6 +5,15 @@
     "nav.contact": "Contact",
     "nav.get_started": "Get Started",
 
+    "lang.en": "EN",
+    "lang.de": "DE",
+    "lang.fr": "FR",
+    "lang.es": "ES",
+
+    "toast.summary": "Message Received",
+    "toast.detail": "We'll be in touch within 24 hours."
+  },
+  "landingPage": {
     "hero.badge": "Elite AI Engineering Collective",
     "hero.heading_from": "From",
     "hero.heading_to": "to",
@@ -89,14 +98,6 @@
 
     "footer.tagline": "Elite AI Engineering",
     "footer.copyright": "© 2025 solve.this. All rights reserved.",
-
-    "lang.en": "EN",
-    "lang.de": "DE",
-    "lang.fr": "FR",
-    "lang.es": "ES",
-
-    "toast.summary": "Message Received",
-    "toast.detail": "We'll be in touch within 24 hours.",
 
     "meta.title": "solve.this — Elite AI Engineering",
     "meta.description": "solve.this — Elite AI Engineering Collective. We architect production-grade LLM fine-tuning, agentic workflows, and RAG systems."

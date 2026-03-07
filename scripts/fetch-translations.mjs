@@ -2,19 +2,30 @@
 /**
  * fetch-translations.mjs
  *
- * Pre-build script that fetches translations from the project's Google Spreadsheet
- * and writes locale JSON files to src/i18n/translations/.
+ * Pre-build script (runs automatically via `prebuild`) that fetches the latest
+ * translations from the Google Spreadsheet and writes locale JSON files to
+ * src/i18n/translations/.
+ *
+ * Sheet tabs processed: i18n  (nav, lang, toast)
+ *                       landingPage  (hero, services, expertise, contact, footer, meta)
  *
  * Uses: @el-j/google-sheet-translations  (v0.0.2)
  * Sheet: https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g
  *
- * Required environment variables (set in .env or CI secrets):
+ * Required environment variables (set via production environment secrets in GitHub):
  *   GOOGLE_CLIENT_EMAIL      – Service account email
  *   GOOGLE_PRIVATE_KEY       – Service account private key (PEM, newlines as \n)
  *   GOOGLE_SPREADSHEET_ID    – Spreadsheet ID (see sheet URL above)
  *
- * The script exits gracefully (code 0) when credentials are absent so that a
- * plain `npm run build` still succeeds using the committed en.json fallback.
+ * Run-modes:
+ *   CI/CD:  credentials come from the `production` GitHub environment secrets
+ *   Local:  set GOOGLE_* vars in .env (copy from .env.example)
+ *
+ * When credentials are absent the script exits gracefully (code 0) so that
+ * `npm run build` still succeeds using the committed fallback translation files.
+ *
+ * To PUSH new keys to the spreadsheet or enable auto-translation, use:
+ *   npm run sync-translations   (scripts/sync-translations.mjs)
  */
 
 import { fileURLToPath } from 'node:url'
