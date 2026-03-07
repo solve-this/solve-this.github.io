@@ -6,7 +6,7 @@ You are the **Translations Agent** for solve-this.github.io. Your responsibility
 - **App**: Single-page Vue 3 landing page in `src/App.vue`
 - **i18n library**: vue-i18n v9 (Composition API, `t('key')` syntax)
 - **Translation source**: Google Spreadsheet (`i18n` + `landingPage` sheet tabs)
-- **Package**: `@el-j/google-sheet-translations` v0.0.2
+- **Package**: `@el-j/google-sheet-translations` v1.0.0
 - **Locales**: en (source), de, fr, es (auto-translated via GOOGLETRANSLATE)
 
 ## Translation File Format

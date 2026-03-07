@@ -7,7 +7,7 @@
     "framework": "Vue 3 Composition API",
     "styling": "Tailwind CSS v4 via @tailwindcss/vite",
     "ui": "PrimeVue 4 (Aura theme)",
-    "i18n": "vue-i18n v9 + @el-j/google-sheet-translations v0.0.2",
+    "i18n": "vue-i18n v9 + @el-j/google-sheet-translations v1.0.0",
     "build": "Vite 7",
     "deploy": "GitHub Pages via deploy.yml"
   },
@@ -66,5 +66,11 @@
     "fetch_script":    "scripts/fetch-translations.mjs",
     "sync_script":     "scripts/sync-translations.mjs",
     "deploy_workflow": ".github/workflows/deploy.yml"
+  },
+
+  "tasks": {
+    "directory": ".claude/tasks/",
+    "format": "YYYY-MM-DD-short-description.md",
+    "convention": "One file per meaningful change. Include status (✅/🔄/❌), summary, files changed, and verification steps."
   }
 }

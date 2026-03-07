@@ -9,7 +9,7 @@
  * Sheet tabs processed: i18n  (nav, lang, toast)
  *                       landingPage  (hero, services, expertise, contact, footer, meta)
  *
- * Uses: @el-j/google-sheet-translations  (v0.0.2)
+ * Uses: @el-j/google-sheet-translations  (v1.0.0)
  * Sheet: https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g
  *
  * Required environment variables (set via production environment secrets in GitHub):
