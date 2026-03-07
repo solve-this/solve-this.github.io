@@ -33,3 +33,8 @@ npm run build
 npm run preview
 ```
 
+## Deployment (GitHub Pages)
+
+The site is deployed at `https://solve-this.github.io` from the `solve-this/solve-this.github.io` repository.
+
+The `VITE_BASE_PATH` env variable in `.github/workflows/deploy.yml` controls the Vite `base` option so assets are loaded from the correct path.
