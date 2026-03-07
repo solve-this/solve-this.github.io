@@ -35,18 +35,6 @@ npm run preview
 
 ## Deployment (GitHub Pages)
 
-The site is currently deployed at `https://solve-this.github.io/landing/` from the `solve-this/landing` repository.
+The site is deployed at `https://solve-this.github.io` from the `solve-this/solve-this.github.io` repository.
 
-### Moving to the org root (`solve-this.github.io`)
-
-GitHub Pages serves an organization's root URL (`<org>.github.io`) only from a repository named `<org>.github.io`. To promote this landing page to the org root:
-
-1. **Rename the repository** in GitHub → Settings → General → Repository name:  
-   Change `landing` → `solve-this.github.io`
-
-2. **Update the base path** in `.github/workflows/deploy.yml`:  
-   Change `VITE_BASE_PATH: /landing/` → `VITE_BASE_PATH: /`
-
-3. Push/re-run the workflow — the site will be live at `https://solve-this.github.io`.
-
-> The `VITE_BASE_PATH` env variable controls the Vite `base` option so assets are loaded from the correct path regardless of where the site is hosted.
+The `VITE_BASE_PATH` env variable in `.github/workflows/deploy.yml` controls the Vite `base` option so assets are loaded from the correct path.
