@@ -18,6 +18,17 @@ watch(locale, () => {
   document.title = t('meta.title')
 }, { immediate: true })
 
+// ── Theme (dark / light) ──────────────────────────────────────────────────────
+const isDark = ref(true)
+function applyTheme(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+}
+function toggleTheme() {
+  isDark.value = !isDark.value
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  applyTheme(isDark.value)
+}
+
 // ── Matrix loading ────────────────────────────────────────────────────────────
 const showMatrix = ref(true)
 const contentVisible = ref(false)
@@ -71,6 +82,11 @@ watch(contentVisible, (val) => {
 })
 
 onMounted(() => {
+  // Restore saved theme preference
+  const saved = localStorage.getItem('theme')
+  if (saved) isDark.value = saved === 'dark'
+  applyTheme(isDark.value)
+
   window.addEventListener('mousemove', moveCursor)
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('keydown', onKeydown)
@@ -281,8 +297,8 @@ async function submitForm() {
   <!-- Page content -->
   <div
     class="min-h-screen overflow-x-hidden"
-    style="background:#0c0a09; color:#fef3c7"
-    :style="{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.8s ease' }"
+    :data-theme="isDark ? 'dark' : 'light'"
+    :style="{ background: 'var(--clr-bg)', color: 'var(--clr-text-1)', opacity: contentVisible ? 1 : 0, transition: 'opacity 0.8s ease, background 0.35s ease, color 0.35s ease' }"
   >
     <Toast position="top-right" />
 
@@ -327,6 +343,14 @@ async function submitForm() {
                 <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
               </template>
             </div>
+            <!-- Theme toggle (desktop) -->
+            <button
+              class="theme-toggle-btn w-8 h-8 rounded-lg flex items-center justify-center interactive transition-all duration-200"
+              :aria-label="isDark ? t('theme.toggle_light') : t('theme.toggle_dark')"
+              @click="toggleTheme"
+            >
+              <i :class="isDark ? 'pi pi-sun' : 'pi pi-moon'" class="text-sm theme-toggle-icon" />
+            </button>
             <a
               href="#contact"
               class="btn-amber px-5 py-2.5 rounded-lg text-sm font-semibold interactive"
@@ -341,6 +365,14 @@ async function submitForm() {
             aria-label="Toggle menu"
           >
             <i :class="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'" class="text-lg" />
+          </button>
+          <!-- Theme toggle (mobile header) -->
+          <button
+            class="theme-toggle-btn md:hidden w-8 h-8 rounded-lg flex items-center justify-center interactive"
+            :aria-label="isDark ? t('theme.toggle_light') : t('theme.toggle_dark')"
+            @click="toggleTheme"
+          >
+            <i :class="isDark ? 'pi pi-sun' : 'pi pi-moon'" class="text-sm theme-toggle-icon" />
           </button>
         </div>
 
@@ -828,6 +860,16 @@ async function submitForm() {
 .marquee { animation: marquee-anim 28s linear infinite; }
 @keyframes marquee-anim { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
+/* Theme toggle button */
+.theme-toggle-btn {
+  background: rgba(245,158,11,0.07);
+  border: 1px solid rgba(245,158,11,0.18);
+  color: var(--clr-text-2);
+  transition: border-color 0.2s, background 0.2s;
+}
+.theme-toggle-btn:hover { border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.12); }
+.theme-toggle-icon { color: #f59e0b; }
+
 /* Hide cursor on touch */
 @media (hover: none) {
   .cursor-dot, .cursor-ring { display: none; }
@@ -836,13 +878,13 @@ async function submitForm() {
 /* PrimeVue overrides */
 :deep(.p-inputtext),
 :deep(.p-textarea) {
-  background: rgba(20,16,10,0.9) !important;
+  background: var(--clr-input-bg) !important;
   border: 1px solid rgba(217,119,6,0.25) !important;
-  color: #fef3c7 !important;
+  color: var(--clr-text-1) !important;
   border-radius: 10px !important;
   font-size: 0.875rem !important;
   padding: 0.75rem 1rem !important;
-  transition: border-color 0.2s, box-shadow 0.2s !important;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.35s, color 0.35s !important;
 }
 :deep(.p-inputtext::placeholder), :deep(.p-textarea::placeholder) { color: rgba(167,128,96,0.6) !important; }
 :deep(.p-inputtext:enabled:focus), :deep(.p-textarea:enabled:focus) {
@@ -851,15 +893,15 @@ async function submitForm() {
   outline: none !important;
 }
 :deep(.p-select) {
-  background: rgba(20,16,10,0.9) !important;
+  background: var(--clr-input-bg) !important;
   border: 1px solid rgba(217,119,6,0.25) !important;
   border-radius: 10px !important;
 }
-:deep(.p-select .p-select-label) { color: #fef3c7 !important; font-size: 0.875rem !important; padding: 0.75rem 1rem !important; }
+:deep(.p-select .p-select-label) { color: var(--clr-text-1) !important; font-size: 0.875rem !important; padding: 0.75rem 1rem !important; }
 :deep(.p-select.p-placeholder .p-select-label) { color: rgba(167,128,96,0.6) !important; }
 :deep(.p-select:not(.p-disabled):hover) { border-color: rgba(245,158,11,0.45) !important; }
 :deep(.p-select:not(.p-disabled).p-focus) { border-color: rgba(245,158,11,0.6) !important; box-shadow: 0 0 0 3px rgba(245,158,11,0.1) !important; }
-:deep(.p-select-overlay) { background: #1a1208 !important; border: 1px solid rgba(217,119,6,0.25) !important; border-radius: 10px !important; }
+:deep(.p-select-overlay) { background: var(--clr-overlay-select, #1a1208) !important; border: 1px solid rgba(217,119,6,0.25) !important; border-radius: 10px !important; }
 :deep(.p-select-option) { color: #d4b896 !important; font-size: 0.875rem !important; padding: 0.625rem 1rem !important; }
 :deep(.p-select-option:hover), :deep(.p-select-option.p-focus) { background: rgba(245,158,11,0.1) !important; color: #f59e0b !important; }
 :deep(.p-select-option.p-select-option-selected) { background: rgba(245,158,11,0.15) !important; color: #fbbf24 !important; }

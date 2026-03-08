@@ -19,7 +19,7 @@
     "vue-i18n": "^9.14.5"
   },
   "devDependencies": {
-    "@el-j/google-sheet-translations": "1.0.2",
+    "@el-j/google-sheet-translations": "^1.2.0",
     "@tailwindcss/vite": "^4.2.1",
     "@vitejs/plugin-vue": "^6.0.2",
     "tailwindcss": "^4.2.1",

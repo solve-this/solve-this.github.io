@@ -4,25 +4,59 @@
 
 html { scroll-behavior: smooth; }
 
+/* ── Theme CSS custom properties ─────────────────────────────────────────── */
+:root {
+  --clr-bg: #0c0a09;
+  --clr-glass: rgba(28, 22, 14, 0.78);
+  --clr-input-bg: rgba(20, 16, 10, 0.9);
+  --clr-text-1: #fef3c7;
+  --clr-text-2: #a78060;
+  --clr-text-3: #6b5040;
+  --clr-text-4: #4a3828;
+  --clr-text-5: #3a2818;
+  --clr-border: rgba(245, 158, 11, 0.12);
+  --clr-border-2: rgba(120, 80, 40, 0.35);
+  --clr-scrollbar: #d97706;
+  --clr-scrollbar-track: #0c0a09;
+  --clr-overlay-select: #1a1208;
+}
+
+[data-theme="light"] {
+  --clr-bg: #fffbeb;
+  --clr-glass: rgba(255, 251, 235, 0.88);
+  --clr-input-bg: rgba(255, 249, 220, 0.96);
+  --clr-text-1: #1c1917;
+  --clr-text-2: #78350f;
+  --clr-text-3: #92400e;
+  --clr-text-4: #b45309;
+  --clr-text-5: #d97706;
+  --clr-border: rgba(217, 119, 6, 0.22);
+  --clr-border-2: rgba(180, 83, 9, 0.28);
+  --clr-scrollbar: #b45309;
+  --clr-scrollbar-track: #fffbeb;
+  --clr-overlay-select: #fef9e8;
+}
+
 body {
   margin: 0;
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #0c0a09;
-  color: #fef3c7;
+  background-color: var(--clr-bg);
+  color: var(--clr-text-1);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   cursor: none;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 #app { width: 100%; }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #0c0a09; }
-::-webkit-scrollbar-thumb { background: #d97706; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--clr-scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--clr-scrollbar); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 
 /* Gradient text — amber/gold */
@@ -41,12 +75,20 @@ body {
   background-clip: text;
 }
 
-/* Glassmorphism — warm cave */
+/* Glassmorphism */
 .glass {
-  background: rgba(28, 22, 14, 0.78);
+  background: var(--clr-glass);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(245, 158, 11, 0.12);
+  border: 1px solid var(--clr-border);
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+/* Light mode — heading colour overrides */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3 {
+  color: var(--clr-text-1) !important;
 }
 
 /* Warm amber button */
