@@ -84,7 +84,7 @@ watch(contentVisible, (val) => {
 onMounted(() => {
   // Restore saved theme preference
   const saved = localStorage.getItem('theme')
-  if (saved) isDark.value = saved !== 'light'
+  if (saved) isDark.value = saved === 'dark'
   applyTheme(isDark.value)
 
   window.addEventListener('mousemove', moveCursor)
@@ -345,14 +345,11 @@ async function submitForm() {
             </div>
             <!-- Theme toggle (desktop) -->
             <button
-              class="w-8 h-8 rounded-lg flex items-center justify-center interactive transition-all duration-200"
-              style="color:#a78060;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.15)"
+              class="theme-toggle-btn w-8 h-8 rounded-lg flex items-center justify-center interactive transition-all duration-200"
               :aria-label="isDark ? t('theme.toggle_light') : t('theme.toggle_dark')"
               @click="toggleTheme"
-              @mouseenter="(e) => e.currentTarget.style.borderColor='rgba(245,158,11,0.4)'"
-              @mouseleave="(e) => e.currentTarget.style.borderColor='rgba(245,158,11,0.15)'"
             >
-              <i :class="isDark ? 'pi pi-sun' : 'pi pi-moon'" class="text-sm" style="color:#f59e0b" />
+              <i :class="isDark ? 'pi pi-sun' : 'pi pi-moon'" class="text-sm theme-toggle-icon" />
             </button>
             <a
               href="#contact"
@@ -371,12 +368,11 @@ async function submitForm() {
           </button>
           <!-- Theme toggle (mobile header) -->
           <button
-            class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center interactive"
-            style="color:#f59e0b;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.15)"
+            class="theme-toggle-btn md:hidden w-8 h-8 rounded-lg flex items-center justify-center interactive"
             :aria-label="isDark ? t('theme.toggle_light') : t('theme.toggle_dark')"
             @click="toggleTheme"
           >
-            <i :class="isDark ? 'pi pi-sun' : 'pi pi-moon'" class="text-sm" />
+            <i :class="isDark ? 'pi pi-sun' : 'pi pi-moon'" class="text-sm theme-toggle-icon" />
           </button>
         </div>
 
@@ -863,6 +859,16 @@ async function submitForm() {
 /* Marquee */
 .marquee { animation: marquee-anim 28s linear infinite; }
 @keyframes marquee-anim { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  background: rgba(245,158,11,0.07);
+  border: 1px solid rgba(245,158,11,0.18);
+  color: var(--clr-text-2);
+  transition: border-color 0.2s, background 0.2s;
+}
+.theme-toggle-btn:hover { border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.12); }
+.theme-toggle-icon { color: #f59e0b; }
 
 /* Hide cursor on touch */
 @media (hover: none) {

@@ -58,9 +58,14 @@ let getSpreadSheetData
 try {
   const pkg = await import('@el-j/google-sheet-translations')
   getSpreadSheetData = pkg.getSpreadSheetData ?? pkg.default
-  // v1.2.0: use validateEnv to get a clear error message if credentials are misconfigured
+  // v1.2.0: validateEnv() provides clearer error messages for misconfigured credentials
   if (pkg.validateEnv) {
-    try { pkg.validateEnv() } catch { /* already checked above */ }
+    try {
+      pkg.validateEnv()
+    } catch (envErr) {
+      // Credentials are checked above; only warn here if validateEnv finds extra issues
+      console.warn('[fetch-translations] ⚠️  validateEnv:', envErr.message)
+    }
   }
 } catch (err) {
   console.error(
