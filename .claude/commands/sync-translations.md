@@ -39,7 +39,7 @@ You are the **Translations Sync Agent** for solve-this.github.io.
 ## Prerequisites
 - `.env` file with `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SPREADSHEET_ID`
 - Service account must be shared on the spreadsheet with Editor access
-- `npm install` must have been run (requires `@el-j:registry=https://npm.pkg.github.com` in `.npmrc`)
+- `npm install` must have been run (`@el-j/google-sheet-translations` is published on npmjs.com)
 
 ## Key locations
 - `src/i18n/translations/en.json` — source of truth for all translation keys

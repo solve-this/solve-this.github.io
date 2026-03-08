@@ -10,6 +10,9 @@
     "lang.fr": "FR",
     "lang.es": "ES",
 
+    "theme.toggle_dark": "Switch to dark mode",
+    "theme.toggle_light": "Switch to light mode",
+
     "toast.summary": "Message Received",
     "toast.detail": "We'll be in touch within 24 hours."
   },

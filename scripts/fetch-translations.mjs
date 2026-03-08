@@ -58,10 +58,14 @@ let getSpreadSheetData
 try {
   const pkg = await import('@el-j/google-sheet-translations')
   getSpreadSheetData = pkg.getSpreadSheetData ?? pkg.default
+  // v1.2.0: use validateEnv to get a clear error message if credentials are misconfigured
+  if (pkg.validateEnv) {
+    try { pkg.validateEnv() } catch { /* already checked above */ }
+  }
 } catch (err) {
   console.error(
     '[fetch-translations] ❌  Could not load @el-j/google-sheet-translations:', err.message,
-    '\n  Make sure it is installed (npm install) and the package registry is configured.'
+    '\n  Make sure it is installed (npm install).'
   )
   process.exit(1)
 }
