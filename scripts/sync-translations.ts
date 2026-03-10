@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * sync-translations.mjs
+ * sync-translations.ts
  *
  * Developer script that syncs local translation keys to the Google Spreadsheet
  * and enables auto-translation for all supported locales.
@@ -27,6 +27,8 @@
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs'
+import type { SpreadsheetOptions } from '@el-j/google-sheet-translations'
+import { getSpreadSheetData } from '@el-j/google-sheet-translations'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
@@ -52,7 +54,7 @@ if (!GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY || !GOOGLE_SPREADSHEET_ID) {
 // ── Paths ─────────────────────────────────────────────────────────────────────
 const translationsDir = path.join(rootDir, 'src', 'i18n', 'translations')
 const dataJsonPath    = path.join(rootDir, 'src', 'i18n', 'languageData.json')
-const localesPath     = path.join(rootDir, 'src', 'i18n', 'locales.js')
+const localesPath     = path.join(rootDir, 'src', 'i18n', 'locales.ts')
 const enJsonPath      = path.join(translationsDir, 'en.json')
 
 // ── Build languageData.json from en.json ──────────────────────────────────────
@@ -67,7 +69,8 @@ const enJsonPath      = path.join(translationsDir, 'en.json')
 //
 // Only English values are seeded; DE/FR/ES are filled via GOOGLETRANSLATE in the sheet.
 //
-const enJson = JSON.parse(fs.readFileSync(enJsonPath, 'utf8'))
+type EnJson = Record<string, Record<string, string>>
+const enJson: EnJson = JSON.parse(fs.readFileSync(enJsonPath, 'utf8')) as EnJson
 
 const languageData = Object.entries(enJson).map(([sheetName, sheetKeys]) => ({
   [sheetName]: { en: sheetKeys },
@@ -78,35 +81,24 @@ const languageData = Object.entries(enJson).map(([sheetName, sheetKeys]) => ({
 fs.mkdirSync(path.dirname(dataJsonPath), { recursive: true })
 fs.writeFileSync(dataJsonPath, JSON.stringify(languageData, null, 2), 'utf8')
 
-const keyCount = Object.values(enJson).reduce((n, sheet) => n + Object.keys(sheet).length, 0)
+const keyCount = Object.values(enJson).reduce<number>((n, sheet) => n + Object.keys(sheet).length, 0)
 console.log(`[sync-translations] 📝  languageData.json written with ${keyCount} English keys across ${Object.keys(enJson).length} sheets`)
-
-// ── Load the translations package ─────────────────────────────────────────────
-let getSpreadSheetData
-try {
-  const pkg = await import('@el-j/google-sheet-translations')
-  getSpreadSheetData = pkg.getSpreadSheetData ?? pkg.default
-} catch (err) {
-  console.error('[sync-translations] ❌  Could not load @el-j/google-sheet-translations:', err.message)
-  process.exit(1)
-}
 
 // ── Run the bidirectional sync ────────────────────────────────────────────────
 console.log('[sync-translations] 🔄  Syncing local keys to Google Sheets (autoTranslate enabled)…')
 
+const syncOptions: SpreadsheetOptions = {
+  rowLimit: 200,
+  waitSeconds: 2,
+  translationsOutputDir: translationsDir,
+  localesOutputPath: localesPath,
+  dataJsonPath,
+  syncLocalChanges: true,   // push new/changed local keys → spreadsheet
+  autoTranslate: true,      // add =GOOGLETRANSLATE() formulas for DE/FR/ES
+}
+
 try {
-  await getSpreadSheetData(
-    ['i18n', 'landingPage'],
-    {
-      rowLimit: 200,
-      waitSeconds: 2,
-      translationsOutputDir: translationsDir,
-      localesOutputPath: localesPath,
-      dataJsonPath,
-      syncLocalChanges: true,   // push new/changed local keys → spreadsheet
-      autoTranslate: true,      // add =GOOGLETRANSLATE() formulas for DE/FR/ES
-    }
-  )
+  await getSpreadSheetData(['i18n', 'landingPage'], syncOptions)
 
   console.log('[sync-translations] ✅  Sync complete.')
   console.log('  • New keys pushed to the Google Spreadsheet')

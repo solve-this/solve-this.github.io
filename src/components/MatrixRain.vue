@@ -51,12 +51,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const emit = defineEmits(['complete'])
+const emit = defineEmits<{ complete: [] }>()
 
-const canvasRef = ref(null)
+const canvasRef = ref<HTMLCanvasElement | null>(null)
 const fading = ref(false)
 const showSkip = ref(false)
 
@@ -73,16 +73,16 @@ const NORMAL_OPACITY_RANGE = 0.45
 const NORMAL_OPACITY_MIN = 0.1
 const INITIAL_SPREAD_ROWS = 60  // rows of random stagger so columns start at different times
 
-let rafId = null
-let startTime = null
-let drops = []
-let skipTimeout = null
+let rafId: number | null = null
+let startTime: number | null = null
+let drops: number[] = []
+let skipTimeout: ReturnType<typeof setTimeout> | null = null
 
-function initDrops(cols) {
+function initDrops(cols: number): void {
   drops = Array.from({ length: cols }, () => -Math.floor(Math.random() * INITIAL_SPREAD_ROWS))
 }
 
-function draw(ctx, canvas, elapsed) {
+function draw(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, elapsed: number): void {
   const dropSpeed = elapsed >= RAIN_MS
     ? 0.5 + Math.min((elapsed - RAIN_MS) / FADE_MS, 1)
     : 1
@@ -134,7 +134,7 @@ function draw(ctx, canvas, elapsed) {
   }
 }
 
-function loop(ts) {
+function loop(ts: number): void {
   if (!startTime) startTime = ts
   const elapsed = ts - startTime
 
@@ -145,7 +145,7 @@ function loop(ts) {
   const canvas = canvasRef.value
   if (canvas) {
     const ctx = canvas.getContext('2d')
-    draw(ctx, canvas, elapsed)
+    if (ctx) draw(ctx, canvas, elapsed)
   }
 
   if (elapsed >= TOTAL_MS) {
@@ -157,14 +157,14 @@ function loop(ts) {
   rafId = requestAnimationFrame(loop)
 }
 
-function skip() {
+function skip(): void {
   if (rafId) cancelAnimationFrame(rafId)
   if (skipTimeout) clearTimeout(skipTimeout)
   window.removeEventListener('resize', onResize)
   emit('complete')
 }
 
-function onResize() {
+function onResize(): void {
   const canvas = canvasRef.value
   if (!canvas) return
   canvas.width = window.innerWidth
@@ -175,6 +175,7 @@ function onResize() {
 
 onMounted(() => {
   const canvas = canvasRef.value
+  if (!canvas) return
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
 

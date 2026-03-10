@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import MatrixRain from './components/MatrixRain.vue'
@@ -8,24 +8,35 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { availableLocales } from './i18n/index.js'
+import { availableLocales } from './i18n/index'
 
 const toast = useToast()
-const { t, locale } = useI18n()
+const { t, locale } = useI18n({ useScope: 'global' })
 
-// ── Dynamic page title ────────────────────────────────────────────────────────
-watch(locale, () => {
+// ── Dynamic page title + locale persistence ───────────────────────────────────
+watch(locale, (newLocale) => {
   document.title = t('meta.title')
+  // Persist locale so it can be restored on the next page load.
+  // Only write when the stored value differs to avoid a redundant write
+  // when onMounted restores the saved locale and triggers this watcher.
+  // Guard against SecurityError / QuotaExceededError (private browsing, etc.).
+  try {
+    if (localStorage.getItem('locale') !== newLocale) {
+      localStorage.setItem('locale', newLocale)
+    }
+  } catch { /* localStorage unavailable — preference is not persisted */ }
 }, { immediate: true })
 
 // ── Theme (dark / light) ──────────────────────────────────────────────────────
 const isDark = ref(true)
-function applyTheme(dark) {
+function applyTheme(dark: boolean): void {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
 }
-function toggleTheme() {
+function toggleTheme(): void {
   isDark.value = !isDark.value
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  try {
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  } catch { /* localStorage unavailable — preference is not persisted */ }
   applyTheme(isDark.value)
 }
 
@@ -39,7 +50,7 @@ function onMatrixDone() {
 }
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
-const onKeydown = (e) => {
+const onKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && showMatrix.value) onMatrixDone()
 }
 
@@ -48,10 +59,10 @@ const cursorX = ref(-200)
 const cursorY = ref(-200)
 const cursorHover = ref(false)
 
-const moveCursor = (e) => {
+const moveCursor = (e: MouseEvent) => {
   cursorX.value = e.clientX
   cursorY.value = e.clientY
-  cursorHover.value = !!e.target.closest('a, button, input, textarea, select, [role=button], [tabindex]:not([tabindex="-1"]), .interactive')
+  cursorHover.value = !!(e.target as Element).closest('a, button, input, textarea, select, [role=button], [tabindex]:not([tabindex="-1"]), .interactive')
 }
 
 // ── Scroll & header ───────────────────────────────────────────────────────────
@@ -60,21 +71,21 @@ const mobileMenuOpen = ref(false)
 const onScroll = () => { scrolled.value = window.scrollY > 40 }
 
 // ── Scroll reveal ─────────────────────────────────────────────────────────────
-let observer = null
+let observer: IntersectionObserver | null = null
 const skillsRevealed = ref(false)
 const REVEAL_THRESHOLD = 0.12  // 12% visible triggers reveal for a natural feel
 
-function setupObserver() {
+function setupObserver(): void {
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible')
-        if (entry.target.dataset.skills !== undefined) skillsRevealed.value = true
-        observer.unobserve(entry.target)
+        if ((entry.target as HTMLElement).dataset.skills !== undefined) skillsRevealed.value = true
+        observer?.unobserve(entry.target)
       }
     })
   }, { threshold: REVEAL_THRESHOLD })
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+  document.querySelectorAll('.reveal').forEach(el => observer!.observe(el))
 }
 
 watch(contentVisible, (val) => {
@@ -82,9 +93,20 @@ watch(contentVisible, (val) => {
 })
 
 onMounted(() => {
+  // Restore saved locale preference.
+  // Guard against SecurityError in restricted environments (private browsing, etc.).
+  try {
+    const savedLocale = localStorage.getItem('locale')
+    if (savedLocale && availableLocales.includes(savedLocale)) {
+      locale.value = savedLocale
+    }
+  } catch { /* localStorage unavailable — use detected locale */ }
+
   // Restore saved theme preference
-  const saved = localStorage.getItem('theme')
-  if (saved) isDark.value = saved === 'dark'
+  try {
+    const saved = localStorage.getItem('theme')
+    if (saved) isDark.value = saved === 'dark'
+  } catch { /* localStorage unavailable — use default theme */ }
   applyTheme(isDark.value)
 
   window.addEventListener('mousemove', moveCursor)
@@ -106,7 +128,7 @@ const navLinks = computed(() => [
 ])
 
 /** Returns the display label for a locale code (e.g. 'en' → 'EN') */
-function localeName(loc) {
+function localeName(loc: string): string {
   return t(`lang.${loc}`, loc.toUpperCase())
 }
 
@@ -119,11 +141,11 @@ const PHASES = computed(() => [
   t('hero.phase_solution'),
 ])
 const currentPhase = computed(() => PHASES.value[phaseIndex.value])
-let phaseTimer = null
+let phaseTimer: ReturnType<typeof setInterval> | null = null
 onMounted(() => {
   phaseTimer = setInterval(() => { phaseIndex.value = (phaseIndex.value + 1) % PHASES.value.length }, 2200)
 })
-onUnmounted(() => clearInterval(phaseTimer))
+onUnmounted(() => { if (phaseTimer !== null) clearInterval(phaseTimer) })
 
 // ── Spore particles ───────────────────────────────────────────────────────────
 // Duration: base 10 seconds + up to 14 seconds variation; delay spread up to 20 seconds for staggered entry
@@ -213,22 +235,24 @@ const services = computed(() => [
 ])
 
 // ── 3D card tilt ──────────────────────────────────────────────────────────────
+interface CardTilt { rx: number; ry: number }
+
 const TILT_INTENSITY = 13        // degrees max tilt on each axis
 const CARD_PERSPECTIVE_PX = 800  // pixel depth for CSS perspective()
-const cardTilt = reactive({})
-function onCardMove(e, idx) {
-  const r = e.currentTarget.getBoundingClientRect()
+const cardTilt = reactive<Record<number, CardTilt>>({})
+function onCardMove(e: MouseEvent, idx: number): void {
+  const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
   const px = (e.clientX - r.left) / r.width - 0.5
   const py = (e.clientY - r.top) / r.height - 0.5
   cardTilt[idx] = { rx: py * -TILT_INTENSITY, ry: px * TILT_INTENSITY }
 }
-function onCardLeave(idx) { delete cardTilt[idx] }
-function tiltTransform(idx) {
+function onCardLeave(idx: number): void { delete cardTilt[idx] }
+function tiltTransform(idx: number): string {
   const tilt = cardTilt[idx]
   if (!tilt) return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(0deg) rotateY(0deg)`
   return `perspective(${CARD_PERSPECTIVE_PX}px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
 }
-function tiltTransition(idx) {
+function tiltTransition(idx: number): string {
   return cardTilt[idx] ? 'none' : 'transform 0.6s ease'
 }
 
@@ -258,8 +282,16 @@ const contactSignals = computed(() => [
   { icon: 'pi pi-check-circle', text: t('contact.signal_contract') },
 ])
 
+interface FormData {
+  name: string
+  email: string
+  company: string
+  service: string | null
+  message: string
+}
+
 // ── Form ──────────────────────────────────────────────────────────────────────
-const formData = ref({ name: '', email: '', company: '', service: null, message: '' })
+const formData = ref<FormData>({ name: '', email: '', company: '', service: null, message: '' })
 const formSubmitting = ref(false)
 const formSubmitted = ref(false)
 const serviceOptions = computed(() => [
@@ -329,8 +361,8 @@ async function submitForm() {
               :href="link.href"
               class="text-sm font-medium transition-colors duration-200 interactive"
               style="color:#a78060"
-              @mouseenter="(e) => e.target.style.color='#f59e0b'"
-              @mouseleave="(e) => e.target.style.color='#a78060'"
+              @mouseenter="(e) => (e.target as HTMLElement).style.color='#f59e0b'"
+              @mouseleave="(e) => (e.target as HTMLElement).style.color='#a78060'"
             >{{ link.label }}</a>
             <!-- Language switcher (desktop) -->
             <div class="flex items-center gap-1" style="color:#6b5040">
@@ -504,8 +536,8 @@ async function submitForm() {
               href="#services"
               class="px-8 py-4 rounded-xl text-base font-semibold border transition-all duration-300 w-full sm:w-auto text-center interactive"
               style="color:#a78060;border-color:rgba(120,90,60,0.4)"
-              @mouseenter="(e) => { e.currentTarget.style.borderColor='rgba(245,158,11,0.4)'; e.currentTarget.style.color='#fef3c7' }"
-              @mouseleave="(e) => { e.currentTarget.style.borderColor='rgba(120,90,60,0.4)'; e.currentTarget.style.color='#a78060' }"
+              @mouseenter="(e) => { (e.currentTarget as HTMLElement).style.borderColor='rgba(245,158,11,0.4)'; (e.currentTarget as HTMLElement).style.color='#fef3c7' }"
+              @mouseleave="(e) => { (e.currentTarget as HTMLElement).style.borderColor='rgba(120,90,60,0.4)'; (e.currentTarget as HTMLElement).style.color='#a78060' }"
             >
               {{ t('hero.cta_secondary') }}
             </a>
@@ -641,8 +673,8 @@ async function submitForm() {
                   :key="tech"
                   class="px-3.5 py-2 rounded-xl text-sm font-medium glass border transition-all duration-200 interactive"
                   style="color:#c8a070;border-color:rgba(120,80,40,0.35)"
-                  @mouseenter="(e) => { e.target.style.color='#f59e0b'; e.target.style.borderColor='rgba(245,158,11,0.35)' }"
-                  @mouseleave="(e) => { e.target.style.color='#c8a070'; e.target.style.borderColor='rgba(120,80,40,0.35)' }"
+                  @mouseenter="(e) => { (e.target as HTMLElement).style.color='#f59e0b'; (e.target as HTMLElement).style.borderColor='rgba(245,158,11,0.35)' }"
+                  @mouseleave="(e) => { (e.target as HTMLElement).style.color='#c8a070'; (e.target as HTMLElement).style.borderColor='rgba(120,80,40,0.35)' }"
                 >{{ tech }}</span>
               </div>
             </div>
@@ -795,8 +827,8 @@ async function submitForm() {
           </div>
           <nav class="flex items-center gap-6">
             <a v-for="link in navLinks" :key="link.href" :href="link.href" class="text-xs interactive" style="color:#4a3828"
-               @mouseenter="(e) => e.target.style.color='#f59e0b'"
-               @mouseleave="(e) => e.target.style.color='#4a3828'"
+               @mouseenter="(e) => (e.target as HTMLElement).style.color='#f59e0b'"
+               @mouseleave="(e) => (e.target as HTMLElement).style.color='#4a3828'"
             >{{ link.label }}</a>
           </nav>
           <p class="text-xs" style="color:#3a2818">{{ t('footer.copyright') }}</p>

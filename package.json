@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "fetch-translations": "node scripts/fetch-translations.mjs",
-    "sync-translations": "node scripts/sync-translations.mjs",
+    "type-check": "vue-tsc --noEmit",
+    "fetch-translations": "tsx scripts/fetch-translations.ts",
+    "sync-translations": "tsx scripts/sync-translations.ts",
     "prebuild": "npm run fetch-translations"
   },
   "dependencies": {
@@ -23,6 +24,9 @@
     "@tailwindcss/vite": "^4.2.1",
     "@vitejs/plugin-vue": "^6.0.2",
     "tailwindcss": "^4.2.1",
-    "vite": "^7.3.1"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vue-tsc": "^3.2.5"
   }
 }
