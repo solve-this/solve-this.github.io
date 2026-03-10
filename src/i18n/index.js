@@ -5,7 +5,7 @@
  * Google Spreadsheet: https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g
  *
  * Format produced by @el-j/google-sheet-translations:
- *   { "i18n": { "section.key": "value", ... } }
+ *   { "i18n": { "section.key": "value", ... }, "landingPage": { "key": "value", ... } }
  *
  * This module flattens those dot-notation keys into nested objects for vue-i18n.
  */
@@ -75,14 +75,31 @@ function normalise(raw) {
   return expandDotKeys(flat)
 }
 
+/**
+ * Returns true when a locale has at least one translated key.
+ * Prevents empty placeholder files (generated before fetch-translations ran)
+ * from appearing in the language switcher with no content.
+ */
+function hasTranslations(msgs) {
+  if (!msgs || typeof msgs !== 'object') return false
+  return Object.keys(msgs).length > 0
+}
+
 // Build vue-i18n messages map
 const messages = {}
 for (const [locale, raw] of Object.entries(localeModules)) {
   messages[locale] = normalise(raw)
 }
 
-/** Sorted list of available locale codes (e.g. ['de','en','fr']) */
-export const availableLocales = Object.keys(messages).sort()
+/**
+ * Sorted list of locale codes that actually have content.
+ * 'en' is always included (it is the source locale).
+ * Other locales are only included when the generated translation file contains
+ * at least one key, i.e. after `npm run fetch-translations` has been run.
+ */
+export const availableLocales = Object.keys(messages)
+  .filter(locale => locale === 'en' || hasTranslations(messages[locale]))
+  .sort()
 
 /** Default locale — prefer browser language, fall back to English */
 function detectLocale() {

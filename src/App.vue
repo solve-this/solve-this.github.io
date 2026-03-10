@@ -11,11 +11,17 @@ import { useToast } from 'primevue/usetoast'
 import { availableLocales } from './i18n/index.js'
 
 const toast = useToast()
-const { t, locale } = useI18n()
+const { t, locale } = useI18n({ useScope: 'global' })
 
-// ── Dynamic page title ────────────────────────────────────────────────────────
-watch(locale, () => {
+// ── Dynamic page title + locale persistence ───────────────────────────────────
+watch(locale, (newLocale) => {
   document.title = t('meta.title')
+  // Persist locale so it can be restored on the next page load.
+  // Only write when the stored value differs to avoid a redundant write
+  // when onMounted restores the saved locale and triggers this watcher.
+  if (localStorage.getItem('locale') !== newLocale) {
+    localStorage.setItem('locale', newLocale)
+  }
 }, { immediate: true })
 
 // ── Theme (dark / light) ──────────────────────────────────────────────────────
@@ -82,6 +88,12 @@ watch(contentVisible, (val) => {
 })
 
 onMounted(() => {
+  // Restore saved locale preference
+  const savedLocale = localStorage.getItem('locale')
+  if (savedLocale && availableLocales.includes(savedLocale)) {
+    locale.value = savedLocale
+  }
+
   // Restore saved theme preference
   const saved = localStorage.getItem('theme')
   if (saved) isDark.value = saved === 'dark'
