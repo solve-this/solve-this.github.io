@@ -28,5 +28,5 @@ dist-ssr
 
 # i18n build artefacts (auto-generated from Google Sheets at build time)
 # Note: src/i18n/translations/*.json are intentionally committed as fallbacks
-src/i18n/locales.js
+src/i18n/locales.ts
 src/i18n/languageData.json

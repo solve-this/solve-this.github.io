@@ -5,7 +5,7 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import 'primeicons/primeicons.css'
 import ToastService from 'primevue/toastservice'
-import i18n from './i18n/index.js'
+import i18n from './i18n/index'
 
 const app = createApp(App)
 

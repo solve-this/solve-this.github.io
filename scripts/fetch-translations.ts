@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * fetch-translations.mjs
+ * fetch-translations.ts
  *
  * Pre-build script (runs automatically via `prebuild`) that fetches the latest
  * translations from the Google Spreadsheet and writes locale JSON files to
@@ -22,12 +22,11 @@
  *     that `npm run build` still succeeds using committed fallback translation files.
  *
  * To PUSH new keys to the spreadsheet or enable auto-translation, use:
- *   npm run sync-translations   (scripts/sync-translations.mjs)
+ *   npm run sync-translations   (scripts/sync-translations.ts)
  */
 
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import fs from 'node:fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
@@ -44,38 +43,33 @@ const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SPREADSHEET_ID } = proce
 // The spreadsheet ID is known from the project URL; use env var or fall back to
 // the hard-coded default so the public-mode fallback always has an ID to work with.
 const DEFAULT_SPREADSHEET_ID = '1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g'
-const SPREADSHEET_ID = GOOGLE_SPREADSHEET_ID || DEFAULT_SPREADSHEET_ID
+const SPREADSHEET_ID = GOOGLE_SPREADSHEET_ID ?? DEFAULT_SPREADSHEET_ID
 const hasCredentials = Boolean(GOOGLE_CLIENT_EMAIL && GOOGLE_PRIVATE_KEY && GOOGLE_SPREADSHEET_ID)
 
 // ── Import the translations package ──────────────────────────────────────────
-let getSpreadSheetData
-try {
-  const pkg = await import('@el-j/google-sheet-translations')
-  getSpreadSheetData = pkg.getSpreadSheetData ?? pkg.default
-  // v1.2.0+: validateEnv() provides clearer error messages for misconfigured credentials
-  if (hasCredentials && pkg.validateEnv) {
-    try {
-      pkg.validateEnv()
-    } catch (envErr) {
-      // Credentials are checked above; only warn here if validateEnv finds extra issues
-      console.warn('[fetch-translations] ⚠️  validateEnv:', envErr.message)
-    }
+import type { SpreadsheetOptions } from '@el-j/google-sheet-translations'
+import {
+  getSpreadSheetData,
+  validateEnv,
+} from '@el-j/google-sheet-translations'
+
+// v1.2.0+: validateEnv() provides clearer error messages for misconfigured credentials
+if (hasCredentials) {
+  try {
+    validateEnv()
+  } catch (envErr) {
+    // Credentials are checked above; only warn here if validateEnv finds extra issues
+    console.warn('[fetch-translations] ⚠️  validateEnv:', (envErr as Error).message)
   }
-} catch (err) {
-  console.error(
-    '[fetch-translations] ❌  Could not load @el-j/google-sheet-translations:', err.message,
-    '\n  Make sure it is installed (npm install).'
-  )
-  process.exit(1)
 }
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 const translationsOutputDir = path.join(rootDir, 'src', 'i18n', 'translations')
-const localesOutputPath = path.join(rootDir, 'src', 'i18n', 'locales.js')
+const localesOutputPath = path.join(rootDir, 'src', 'i18n', 'locales.ts')
 const dataJsonPath = path.join(rootDir, 'src', 'i18n', 'languageData.json')
 
 // ── Shared options ────────────────────────────────────────────────────────────
-const sharedOptions = {
+const sharedOptions: SpreadsheetOptions = {
   rowLimit: 200,
   waitSeconds: 1,
   translationsOutputDir,
@@ -118,7 +112,7 @@ try {
   console.log('[fetch-translations] ✅  Public-mode fetch succeeded. Files written to', translationsOutputDir)
 } catch (err) {
   console.warn(
-    '[fetch-translations] ⚠️  Public-mode fetch failed:', err.message,
+    '[fetch-translations] ⚠️  Public-mode fetch failed:', (err as Error).message,
     '\n  Using committed translation files as fallback.',
     '\n  Tip: share the spreadsheet as "Anyone with the link can view" to enable',
     '\n  credential-free fetching, or set GOOGLE_CLIENT_EMAIL / GOOGLE_PRIVATE_KEY.'
