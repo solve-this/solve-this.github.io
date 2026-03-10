@@ -19,9 +19,12 @@ watch(locale, (newLocale) => {
   // Persist locale so it can be restored on the next page load.
   // Only write when the stored value differs to avoid a redundant write
   // when onMounted restores the saved locale and triggers this watcher.
-  if (localStorage.getItem('locale') !== newLocale) {
-    localStorage.setItem('locale', newLocale)
-  }
+  // Guard against SecurityError / QuotaExceededError (private browsing, etc.).
+  try {
+    if (localStorage.getItem('locale') !== newLocale) {
+      localStorage.setItem('locale', newLocale)
+    }
+  } catch { /* localStorage unavailable — preference is not persisted */ }
 }, { immediate: true })
 
 // ── Theme (dark / light) ──────────────────────────────────────────────────────
@@ -29,9 +32,11 @@ const isDark = ref(true)
 function applyTheme(dark: boolean): void {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
 }
-function toggleTheme() {
+function toggleTheme(): void {
   isDark.value = !isDark.value
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  try {
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  } catch { /* localStorage unavailable — preference is not persisted */ }
   applyTheme(isDark.value)
 }
 
@@ -88,15 +93,20 @@ watch(contentVisible, (val) => {
 })
 
 onMounted(() => {
-  // Restore saved locale preference
-  const savedLocale = localStorage.getItem('locale')
-  if (savedLocale && availableLocales.includes(savedLocale)) {
-    locale.value = savedLocale
-  }
+  // Restore saved locale preference.
+  // Guard against SecurityError in restricted environments (private browsing, etc.).
+  try {
+    const savedLocale = localStorage.getItem('locale')
+    if (savedLocale && availableLocales.includes(savedLocale)) {
+      locale.value = savedLocale
+    }
+  } catch { /* localStorage unavailable — use detected locale */ }
 
   // Restore saved theme preference
-  const saved = localStorage.getItem('theme')
-  if (saved) isDark.value = saved === 'dark'
+  try {
+    const saved = localStorage.getItem('theme')
+    if (saved) isDark.value = saved === 'dark'
+  } catch { /* localStorage unavailable — use default theme */ }
   applyTheme(isDark.value)
 
   window.addEventListener('mousemove', moveCursor)

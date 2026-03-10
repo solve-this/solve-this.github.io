@@ -47,6 +47,11 @@ try {
   if (esRaw) localeModules['es'] = (esRaw.default ?? esRaw) as RawLocaleFile
 } catch { /* locale not yet generated */ }
 
+/** Returns true if `value` is an existing nested MessageTree node (safe to reuse). */
+function isExistingTree(value: string | MessageTree | undefined): value is MessageTree {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
 /**
  * Expands flat dot-notation keys into a nested object.
  * e.g. { "nav.services": "Services" } → { nav: { services: "Services" } }
@@ -58,8 +63,7 @@ function expandDotKeys(flat: SheetMap): MessageTree {
     let cursor: MessageTree = result
     for (let i = 0; i < parts.length - 1; i++) {
       const part = parts[i]
-      const existing = cursor[part]
-      cursor[part] = existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {}
+      cursor[part] = isExistingTree(cursor[part]) ? cursor[part] : {}
       cursor = cursor[part] as MessageTree
     }
     cursor[parts[parts.length - 1]] = value

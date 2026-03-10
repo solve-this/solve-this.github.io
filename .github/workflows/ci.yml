@@ -1,0 +1,150 @@
+# CI — Quality Gate
+#
+# Runs on every pull request targeting `main` and blocks the merge until all
+# four jobs pass:
+#
+#   1. type-check        — TypeScript strict compile (vue-tsc --noEmit)
+#   2. audit             — npm audit (high/critical CVEs block the PR)
+#                          npm outdated is reported informally, never blocks
+#   3. build             — full Vite production build (prebuild runs
+#                          fetch-translations, so Google credentials are needed)
+#   4. translations-sync — fetches the latest translations from Google Sheets
+#                          and verifies the committed JSON files match exactly.
+#                          Fails with fix instructions if any drift is found.
+#
+# ── Branch protection ──────────────────────────────────────────────────────────
+# For these jobs to actually gate merges, enable branch protection on `main`:
+#   Repository → Settings → Branches → Branch protection rules
+#   ✅ Require status checks to pass before merging
+#   ✅ Require branches to be up to date before merging
+#   Required checks: TypeScript / Package Audit / Build / Translations Sync
+#
+# ── Environment secrets ────────────────────────────────────────────────────────
+# The `build` and `translations-sync` jobs use the `production` GitHub
+# environment (same as the deploy workflow).  Make sure that environment is
+# configured to allow access from PR branches, not just `main`.
+# Secrets needed:  GOOGLE_CLIENT_EMAIL · GOOGLE_PRIVATE_KEY · GOOGLE_SPREADSHEET_ID
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Cancel previous runs for the same branch when new commits are pushed.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── 1. TypeScript ─────────────────────────────────────────────────────────────
+  type-check:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Strict type-check (vue-tsc --noEmit)
+        run: npm run type-check
+
+  # ── 2. Package Audit ──────────────────────────────────────────────────────────
+  audit:
+    name: Package Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit for known vulnerabilities (high and above, including critical)
+        run: npm audit --audit-level=high
+
+      # Informational: lists packages with newer versions available.
+      # Never fails the build; output is visible in the workflow logs.
+      - name: Report outdated packages (informational)
+        run: npm outdated || true
+        continue-on-error: true
+
+  # ── 3. Build ──────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # prebuild hook → npm run fetch-translations → npm run build
+      - name: Production build (includes fetch-translations as prebuild)
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /
+          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+
+  # ── 4. Translations Sync ──────────────────────────────────────────────────────
+  translations-sync:
+    name: Translations Sync
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fetch the current state of the Google Spreadsheet.
+      # With credentials → authenticated read of the private spreadsheet.
+      # Without credentials → public-mode fallback (spreadsheet must be shared
+      #   "Anyone with the link can view") or graceful exit using committed files.
+      - name: Fetch latest translations from Google Sheets
+        run: npm run fetch-translations
+        env:
+          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+
+      # If fetch-translations updated any JSON file in translations/, the
+      # committed source is out of sync with the spreadsheet → block the PR.
+      - name: Verify committed translations match the spreadsheet
+        run: |
+          if ! git diff --exit-code src/i18n/translations/; then
+            echo ""
+            echo "❌ Translation files are out of sync with Google Sheets."
+            echo ""
+            echo "To fix, run one of the following locally and commit the result:"
+            echo "  • npm run fetch-translations   – spreadsheet has newer translations"
+            echo "  • npm run sync-translations    – you added new keys to en.json"
+            exit 1
+          fi
+          echo "✅ All committed translation files match the Google Spreadsheet."
