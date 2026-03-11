@@ -6,9 +6,10 @@
 #   1. type-check        — TypeScript strict compile (vue-tsc --noEmit)
 #   2. audit             — npm audit (high/critical CVEs block the PR)
 #                          npm outdated is reported informally, never blocks
-#   3. build             — full Vite production build (prebuild runs
-#                          fetch-translations, so Google credentials are needed)
-#   4. translations-sync — fetches the latest translations from Google Sheets
+#   3. build             — full Vite production build.
+#                          Uses el-j/google-sheet-translations@v1.4.0 action to fetch
+#                          translations before running npm run build.
+#   4. translations-sync — uses the same bundled action to fetch the latest translations
 #                          and verifies the committed JSON files match exactly.
 #                          Fails with fix instructions if any drift is found.
 #
@@ -98,14 +99,29 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # prebuild hook → npm run fetch-translations → npm run build
-      - name: Production build (includes fetch-translations as prebuild)
+      # Fetch translations using the bundled GitHub Action (no extra Node setup needed).
+      # The action writes locale JSON files to src/i18n/translations/ before the build.
+      - name: Fetch translations from Google Sheets
+        uses: el-j/google-sheet-translations@v1.4.0
+        with:
+          google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          google-spreadsheet-id:    ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          sheet-titles:             'landingPage'
+          translations-output-dir:  'src/i18n/translations'
+          locales-output-path:      'src/i18n/locales.ts'
+          data-json-path:           'src/i18n/languageData.json'
+          sync-local-changes:       'false'
+          row-limit:                '200'
+          wait-seconds:             '1'
+
+      # Build Vite app. SKIP_PREBUILD_FETCH=1 tells the prebuild hook to skip the
+      # redundant fetch since the action above already populated the translation files.
+      - name: Production build
         run: npm run build
         env:
           VITE_BASE_PATH: /
-          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
-          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
-          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          SKIP_PREBUILD_FETCH: '1'
 
   # ── 4. Translations Sync ──────────────────────────────────────────────────────
   translations-sync:
@@ -115,27 +131,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      # Fetch the current state of the Google Spreadsheet.
-      # With credentials → authenticated read of the private spreadsheet.
-      # Without credentials → public-mode fallback (spreadsheet must be shared
-      #   "Anyone with the link can view") or graceful exit using committed files.
+      # Use the bundled GitHub Action — no Node.js setup or npm install needed.
+      # The action reads the spreadsheet and writes locale JSON files.
       - name: Fetch latest translations from Google Sheets
-        run: npm run fetch-translations
-        env:
-          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
-          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
-          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+        uses: el-j/google-sheet-translations@v1.4.0
+        with:
+          google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          google-spreadsheet-id:    ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          sheet-titles:             'landingPage'
+          translations-output-dir:  'src/i18n/translations'
+          locales-output-path:      'src/i18n/locales.ts'
+          data-json-path:           'src/i18n/languageData.json'
+          sync-local-changes:       'false'
+          row-limit:                '200'
+          wait-seconds:             '1'
 
-      # If fetch-translations updated any JSON file in translations/, the
-      # committed source is out of sync with the spreadsheet → block the PR.
+      # If the action updated any JSON file in translations/, the committed source
+      # is out of sync with the spreadsheet → block the PR.
       - name: Verify committed translations match the spreadsheet
         run: |
           if ! git diff --exit-code src/i18n/translations/; then

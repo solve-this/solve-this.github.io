@@ -32,13 +32,29 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Fetch translations using the bundled GitHub Action (no extra Node setup needed).
+      # The action writes locale JSON files to src/i18n/translations/ before the build.
+      - name: Fetch translations from Google Sheets
+        uses: el-j/google-sheet-translations@v1.4.0
+        with:
+          google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          google-spreadsheet-id:    ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          sheet-titles:             'landingPage'
+          translations-output-dir:  'src/i18n/translations'
+          locales-output-path:      'src/i18n/locales.ts'
+          data-json-path:           'src/i18n/languageData.json'
+          sync-local-changes:       'false'
+          row-limit:                '200'
+          wait-seconds:             '1'
+
+      # Build Vite app. SKIP_PREBUILD_FETCH=1 tells the prebuild hook to skip the
+      # redundant fetch since the action above already populated the translation files.
       - name: Build
         run: npm run build
         env:
           VITE_BASE_PATH: /
-          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
-          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
-          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          SKIP_PREBUILD_FETCH: '1'
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
