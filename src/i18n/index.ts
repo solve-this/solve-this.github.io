@@ -119,6 +119,16 @@ export const availableLocales: string[] = Object.keys(messages)
   .filter(locale => locale === 'en' || hasTranslations(messages[locale]))
   .sort()
 
+/**
+ * Native (untranslated) display names for each supported locale.
+ * Used by the language switcher so users can always identify their language
+ * regardless of the currently active locale.
+ */
+export const localeNativeNames: Record<string, string> = {
+  en: 'English', de: 'Deutsch', fr: 'Français', es: 'Español',
+  it: 'Italiano', pl: 'Polski', ru: 'Русский', tr: 'Türkçe',
+}
+
 /** Default locale — prefer browser language, fall back to English */
 function detectLocale(): string {
   if (typeof navigator === 'undefined') return 'en'

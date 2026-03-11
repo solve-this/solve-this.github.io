@@ -8,7 +8,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { availableLocales } from './i18n/index'
+import { availableLocales, localeNativeNames } from './i18n/index'
 
 const toast = useToast()
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -131,6 +131,14 @@ const navLinks = computed(() => [
 function localeName(loc: string): string {
   return t(`lang.${loc}`, loc.toUpperCase())
 }
+
+/** Options array for the PrimeVue Select language switcher */
+const localeOptions = computed(() =>
+  availableLocales.map(loc => ({
+    label: localeNativeNames[loc] ?? loc.toUpperCase(),
+    value: loc,
+  }))
+)
 
 // ── Hero word cycle ───────────────────────────────────────────────────────────
 const phaseIndex = ref(0)
@@ -365,16 +373,21 @@ async function submitForm() {
               @mouseleave="(e) => (e.target as HTMLElement).style.color='#a78060'"
             >{{ link.label }}</a>
             <!-- Language switcher (desktop) -->
-            <div class="flex items-center gap-1" style="color:#6b5040">
-              <template v-for="(loc, idx) in availableLocales" :key="loc">
-                <button
-                  class="text-xs font-semibold uppercase tracking-wider interactive transition-colors duration-200"
-                  :style="locale === loc ? 'color:#f59e0b' : 'color:#6b5040'"
-                  @click="locale = loc"
-                >{{ localeName(loc) }}</button>
-                <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
+            <Select
+              v-model="locale"
+              :options="localeOptions"
+              option-label="label"
+              option-value="value"
+              class="lang-select interactive"
+              aria-label="Select language"
+            >
+              <template #value="{ value }">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-globe" style="font-size:0.65rem" />
+                  <span>{{ localeName(value) }}</span>
+                </span>
               </template>
-            </div>
+            </Select>
             <!-- Theme toggle (desktop) -->
             <button
               class="theme-toggle-btn w-8 h-8 rounded-lg flex items-center justify-center interactive transition-all duration-200"
@@ -420,16 +433,21 @@ async function submitForm() {
                 @click="mobileMenuOpen = false"
               >{{ link.label }}</a>
               <!-- Language switcher (mobile) -->
-              <div class="flex items-center gap-2 py-1">
-                <template v-for="(loc, idx) in availableLocales" :key="loc">
-                  <button
-                    class="text-xs font-semibold uppercase tracking-wider interactive transition-colors duration-200"
-                    :style="locale === loc ? 'color:#f59e0b' : 'color:#6b5040'"
-                    @click="locale = loc"
-                  >{{ localeName(loc) }}</button>
-                  <span v-if="idx < availableLocales.length - 1" class="text-xs" style="color:#3a2818">|</span>
+              <Select
+                v-model="locale"
+                :options="localeOptions"
+                option-label="label"
+                option-value="value"
+                class="lang-select lang-select-mobile interactive"
+                aria-label="Select language"
+              >
+                <template #value="{ value }">
+                  <span class="flex items-center gap-1">
+                    <i class="pi pi-globe" style="font-size:0.65rem" />
+                    <span>{{ localeName(value) }}</span>
+                  </span>
                 </template>
-              </div>
+              </Select>
               <a href="#contact" class="btn-amber px-5 py-2.5 rounded-lg text-sm font-semibold text-center interactive" style="color:#0c0a09" @click="mobileMenuOpen = false">
                 {{ t('nav.get_started') }}
               </a>
@@ -942,4 +960,33 @@ async function submitForm() {
 :deep(.p-toast .p-toast-message) { background: #1a1208 !important; border: 1px solid rgba(245,158,11,0.3) !important; border-radius: 12px !important; }
 :deep(.p-toast .p-toast-message-text) { color: #fef3c7 !important; }
 :deep(.p-toast .p-toast-summary) { color: #f59e0b !important; font-weight: 700 !important; }
+
+/* ── Language switcher select (nav) ─────────────────────────────────────── */
+:deep(.lang-select.p-select) {
+  background: transparent !important;
+  border: 1px solid rgba(245,158,11,0.18) !important;
+  border-radius: 8px !important;
+  min-width: 0 !important;
+  width: auto !important;
+  transition: border-color 0.2s ease !important;
+}
+:deep(.lang-select .p-select-label) {
+  color: #a78060 !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.375rem 0.25rem 0.375rem 0.625rem !important;
+}
+:deep(.lang-select .p-select-dropdown) {
+  padding: 0.375rem 0.5rem 0.375rem 0 !important;
+  color: #a78060 !important;
+  width: auto !important;
+}
+:deep(.lang-select:not(.p-disabled):hover) { border-color: rgba(245,158,11,0.4) !important; }
+:deep(.lang-select:not(.p-disabled).p-focus) {
+  border-color: rgba(245,158,11,0.6) !important;
+  box-shadow: 0 0 0 2px rgba(245,158,11,0.1) !important;
+}
+:deep(.lang-select-mobile.p-select) { width: 100% !important; }
 </style>
