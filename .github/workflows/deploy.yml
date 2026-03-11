@@ -40,7 +40,7 @@ jobs:
           google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
           google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}
           google-spreadsheet-id:    ${{ secrets.GOOGLE_SPREADSHEET_ID }}
-          sheet-titles:             'landingPage'
+          sheet-titles:             'i18n,landingPage'
           translations-output-dir:  'src/i18n/translations'
           locales-output-path:      'src/i18n/locales.ts'
           data-json-path:           'src/i18n/languageData.json'

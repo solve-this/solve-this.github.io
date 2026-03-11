@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- solve.this brand favicon: terminal prompt ">_" on dark background -->
+  <!-- Background: brand dark (#0c0a09) with rounded corners -->
+  <rect width="32" height="32" rx="6" fill="#0c0a09"/>
+  <!-- Terminal ">" chevron in amber (#fbbf24) — the "solve" prompt -->
+  <path d="M5 10 L14 16 L5 22"
+        stroke="#fbbf24" stroke-width="2.8"
+        stroke-linecap="round" stroke-linejoin="round"
+        fill="none"/>
+  <!-- Cursor underscore "_" in amber — command ready -->
+  <rect x="17" y="20" width="10" height="2.6" rx="1.3" fill="#fbbf24"/>
+  <!-- Violet dot (#7c3aed) — the "." in "solve.this" -->
+  <circle cx="24" cy="9.5" r="2.4" fill="#7c3aed"/>
+</svg>
