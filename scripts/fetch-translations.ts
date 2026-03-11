@@ -9,11 +9,14 @@
  * Sheet tabs processed: i18n  (nav, lang, toast)
  *                       landingPage  (hero, services, expertise, contact, footer, meta)
  *
- * Uses: @el-j/google-sheet-translations  (v1.3.3)
+ * Uses: @el-j/google-sheet-translations  (v1.4.0)
  * Sheet: https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g
  *
  * Run-modes:
- *   Authenticated (CI/CD): credentials from the `production` GitHub environment secrets:
+ *   CI/CD (primary):  The `el-j/google-sheet-translations@v1.4.0` GitHub Action runs
+ *     BEFORE this script in CI workflows and writes translation files directly.
+ *     Set SKIP_PREBUILD_FETCH=1 in the build step env to skip this script entirely.
+ *   Authenticated (local): credentials from .env or CI env:
  *     GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SPREADSHEET_ID
  *   Public fallback: when credentials are absent the script falls back to
  *     `publicSheet: true` mode, reading the spreadsheet via the Google
@@ -30,6 +33,14 @@ import path from 'node:path'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
+
+// ── Skip hook when the GitHub Action has already fetched translations ─────────
+// Set SKIP_PREBUILD_FETCH=1 in the CI build step env to avoid a redundant
+// second fetch after `el-j/google-sheet-translations` action has already run.
+if (process.env.SKIP_PREBUILD_FETCH) {
+  console.log('[fetch-translations] ⏭️  SKIP_PREBUILD_FETCH set — action already populated translation files, skipping.')
+  process.exit(0)
+}
 
 // Load .env when running locally (optional – not required in CI)
 try {

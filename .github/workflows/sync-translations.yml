@@ -1,0 +1,120 @@
+# Sync Translations Workflow
+#
+# Pushes English translation keys from `en.json` to the Google Spreadsheet,
+# bootstraps the spreadsheet structure (creates missing sheet tabs, adds
+# DE/FR/ES columns, inserts GOOGLETRANSLATE() formulas for existing rows),
+# then fetches back the evaluated translations and commits updated locale files.
+#
+# ── Trigger ────────────────────────────────────────────────────────────────────
+#   workflow_dispatch  – trigger manually from the GitHub Actions UI
+#   schedule           – runs every Monday at 06:00 UTC to keep translations fresh
+#
+# ── What this does ─────────────────────────────────────────────────────────────
+#   1. npm run sync-translations
+#      • Reads en.json → generates languageData.json
+#      • Creates any missing sheet tabs (i18n / landingPage) with key|en|de|fr|es headers
+#      • Adds de/fr/es columns to existing sheets if absent
+#      • Inserts =GOOGLETRANSLATE() formulas into every empty DE/FR/ES cell
+#      • Pushes new keys (those not yet in the sheet) with GOOGLETRANSLATE formulas
+#   2. Waits 60 s for Google Sheets to evaluate the GOOGLETRANSLATE formulas
+#   3. npm run fetch-translations
+#      • Reads the now-evaluated translations from the spreadsheet
+#      • Writes updated de.json / fr.json / es.json to src/i18n/translations/
+#   4. Commits and pushes updated locale files → triggers a fresh deploy
+#
+# ── Prerequisites ──────────────────────────────────────────────────────────────
+#   • GitHub Environment "production" must have these secrets:
+#       GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SPREADSHEET_ID
+#   • The service account must have Editor access to the spreadsheet:
+#       https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g
+
+name: Sync Translations
+
+on:
+  workflow_dispatch:
+    inputs:
+      wait_seconds:
+        description: 'Seconds to wait after sync before fetching (allow GOOGLETRANSLATE to evaluate)'
+        required: false
+        default: '60'
+
+  schedule:
+    # Every Monday at 06:00 UTC — syncs any en.json changes and refreshes
+    # DE/FR/ES translations by running the full bootstrap + sync + fetch cycle.
+    - cron: '0 6 * * 1'
+
+# Allow this workflow to commit and push updated locale files back to the repo.
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-translations
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Sync & Fetch Translations
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Use the default token — contents:write permission above grants push access.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Step 1: Push English keys → Google Sheets ───────────────────────────
+      # Reads en.json, bootstraps the spreadsheet structure (creates sheets /
+      # adds columns / inserts GOOGLETRANSLATE formulas), then pushes all new
+      # keys so every locale column has a formula to evaluate.
+      - name: Push English keys to Google Sheets (bootstrap + sync)
+        run: npm run sync-translations
+        env:
+          GOOGLE_CLIENT_EMAIL:    ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY:     ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_SPREADSHEET_ID:  ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+
+      # ── Step 2: Wait for formula evaluation ────────────────────────────────
+      # GOOGLETRANSLATE() formulas are evaluated asynchronously by Google Sheets.
+      # The default 60 s is usually sufficient; increase via the input if needed.
+      - name: Wait for Google Sheets formula evaluation
+        run: |
+          WAIT="${{ github.event.inputs.wait_seconds || '60' }}"
+          echo "⏳ Waiting ${WAIT}s for GOOGLETRANSLATE formulas to evaluate…"
+          sleep "${WAIT}"
+
+      # ── Step 3: Pull evaluated translations ────────────────────────────────
+      # Re-reads the spreadsheet after formulas have evaluated and writes the
+      # final de/fr/es locale JSON files.
+      - name: Fetch evaluated translations from Google Sheets
+        run: npm run fetch-translations
+        env:
+          GOOGLE_CLIENT_EMAIL:    ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY:     ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_SPREADSHEET_ID:  ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+
+      # ── Step 4: Commit updated locale files ────────────────────────────────
+      # If any translation JSON changed, commit and push so the deploy workflow
+      # picks up the fresh translations on the next build.
+      - name: Commit updated translation files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/i18n/translations/
+          if git diff --staged --quiet; then
+            echo "✅ Translation files unchanged — nothing to commit."
+          else
+            git commit -m "chore(i18n): sync translations from Google Sheets"
+            git push
+            echo "✅ Updated locale files committed and pushed."
+          fi

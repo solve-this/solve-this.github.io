@@ -8,6 +8,7 @@ You are the **Translations Sync Agent** for solve-this.github.io.
 - After adding one or more new `t('key')` calls in `src/App.vue`
 - After updating English copy in `src/i18n/translations/en.json`
 - When the Google Spreadsheet is missing keys that exist locally
+- On first-time setup or when DE/FR/ES columns are missing from the spreadsheet
 
 ## Steps
 
@@ -21,20 +22,31 @@ You are the **Translations Sync Agent** for solve-this.github.io.
    npm run sync-translations
    ```
    This will:
-   - Read `en.json` and generate `languageData.json` (gitignored)
-   - Push new keys to the Google Spreadsheet (i18n and landingPage tabs)
-   - Add `=GOOGLETRANSLATE()` formulas for DE/FR/ES columns
+   - Read `en.json` and generate `languageData.json`
+   - **Bootstrap** the spreadsheet:
+     - Create missing sheet tabs (i18n / landingPage) with `key|en|de|fr|es` headers
+     - Add `de|fr|es` columns to existing sheets if absent
+     - Insert `=GOOGLETRANSLATE()` formulas into every empty DE/FR/ES cell on existing rows
+   - Push new keys to the Google Spreadsheet with `=GOOGLETRANSLATE()` formulas for DE/FR/ES
    - Fetch the updated sheet and overwrite locale files
 
-3. **Review the output**
-   - Check that `src/i18n/translations/` files are updated
+3. **Wait for Google Sheets to evaluate the GOOGLETRANSLATE formulas** (usually a few seconds)
+
+4. **Fetch the final translated values**
+   ```bash
+   npm run fetch-translations
+   ```
+
+5. **Review the output**
+   - Check that `src/i18n/translations/` files are updated with DE/FR/ES content
    - Verify the spreadsheet has the new keys in the correct sheet tab
 
-4. **Commit the changes**
+6. **Commit the changes**
    ```bash
    git add src/i18n/translations/
-   git commit -m "i18n: sync translation keys from en.json to Google Sheets"
+   git commit -m "i18n: sync translation keys and update translations"
    ```
+   > Note: `languageData.json` and `locales.ts` are intentionally gitignored (auto-generated at build time)
 
 ## Prerequisites
 - `.env` file with `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SPREADSHEET_ID`
@@ -44,4 +56,4 @@ You are the **Translations Sync Agent** for solve-this.github.io.
 ## Key locations
 - `src/i18n/translations/en.json` — source of truth for all translation keys
 - `src/App.vue` — all `t('key')` usage
-- `scripts/sync-translations.mjs` — sync script source
+- `scripts/sync-translations.ts` — sync script (includes bootstrap phase)
