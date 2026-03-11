@@ -44,7 +44,8 @@ if (process.env.SKIP_PREBUILD_FETCH) {
 
 // Load .env when running locally (optional – not required in CI)
 try {
-  const { config } = await import('dotenv')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { config } = await import(/* @vite-ignore */ 'dotenv' as string) as { config: (opts: { path: string }) => void }
   config({ path: path.join(rootDir, '.env') })
 } catch { /* dotenv not installed; env vars expected from CI */ }
 

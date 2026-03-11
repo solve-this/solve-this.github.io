@@ -38,6 +38,13 @@ on:
         required: false
         default: '60'
 
+  push:
+    branches:
+      - main
+      - dev-i18n
+    paths:
+      - 'src/i18n/translations/en.json'
+
   schedule:
     # Every Monday at 06:00 UTC — syncs any en.json changes and refreshes
     # DE/FR/ES translations by running the full bootstrap + sync + fetch cycle.
