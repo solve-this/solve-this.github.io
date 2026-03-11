@@ -6,7 +6,7 @@ You are the **Translations Agent** for solve-this.github.io. Your responsibility
 - **App**: Single-page Vue 3 landing page in `src/App.vue`
 - **i18n library**: vue-i18n v9 (Composition API, `t('key')` syntax)
 - **Translation source**: Google Spreadsheet (`i18n` + `landingPage` sheet tabs)
-- **Package**: `@el-j/google-sheet-translations` v1.0.0
+- **Package**: `@el-j/google-sheet-translations` v1.3.3
 - **Locales**: en (source), de, fr, es (auto-translated via GOOGLETRANSLATE)
 
 ## Translation File Format
@@ -18,19 +18,28 @@ Each locale file (`en.json`, `de.json`, etc.) uses the package's namespace forma
 }
 ```
 
-The `src/i18n/index.js` `normalise()` function merges all sheet namespaces and expands dot-notation to nested objects for vue-i18n.
+The `src/i18n/index.ts` `normalise()` function merges all sheet namespaces and expands dot-notation to nested objects for vue-i18n.
 
 ## Key Distribution Rules
 | Namespace | Keys |
 |-----------|------|
-| `i18n` sheet | `nav.*`, `lang.*`, `toast.*` |
+| `i18n` sheet | `nav.*`, `lang.*`, `theme.*`, `toast.*` |
 | `landingPage` sheet | `hero.*`, `services.*`, `expertise.*`, `contact.*`, `footer.*`, `meta.*` |
 
 ## Workflow: Adding a New Key
 1. Add `t('section.key')` in `src/App.vue`
 2. Add `"section.key": "English value"` in the correct namespace in `en.json`
-3. Run `npm run sync-translations` → pushes to sheet, adds GOOGLETRANSLATE formulas
-4. Commit `src/i18n/translations/` files
+3. Run `npm run sync-translations` → bootstraps spreadsheet columns, pushes to sheet, adds GOOGLETRANSLATE formulas
+4. Wait a moment for Google Sheets to evaluate the formulas
+5. Run `npm run fetch-translations` → pulls computed translations
+6. Commit `src/i18n/translations/` files
+   > Note: `languageData.json` and `locales.ts` are gitignored (auto-generated) — do not commit them
+
+## Workflow: Initial Setup / Resetting Translations
+Run `npm run sync-translations` once — it will:
+- Create missing sheet tabs with `key|en|de|fr|es` headers
+- Add `de|fr|es` columns to existing sheets that only have `key|en`
+- Insert `=GOOGLETRANSLATE()` formulas into every empty `de`/`fr`/`es` cell on existing rows
 
 ## Workflow: Pulling Translations
 1. Run `npm run fetch-translations` to get latest from sheet
@@ -53,3 +62,4 @@ key | en | de | fr | es
 - **key**: dot-notation key (e.g. `hero.badge`)
 - **en**: English source text
 - **de / fr / es**: either manual translations or `=GOOGLETRANSLATE()` formulas
+
