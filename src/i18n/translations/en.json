@@ -1,10 +1,5 @@
 {
   "i18n": {
-    "nav.services": "Services",
-    "nav.expertise": "Expertise",
-    "nav.contact": "Contact",
-    "nav.get_started": "Get Started",
-
     "lang.en": "EN",
     "lang.de": "DE",
     "lang.fr": "FR",
@@ -12,15 +7,20 @@
     "lang.it": "IT",
     "lang.pl": "PL",
     "lang.ru": "RU",
-    "lang.tr": "TR",
+    "lang.tr": "TR"
+  },
+  "landingPage": {
+    "nav.services": "Services",
+    "nav.expertise": "Expertise",
+    "nav.contact": "Contact",
+    "nav.get_started": "Get Started",
 
     "theme.toggle_dark": "Switch to dark mode",
     "theme.toggle_light": "Switch to light mode",
 
     "toast.summary": "Message Received",
-    "toast.detail": "We'll be in touch within 24 hours."
-  },
-  "landingPage": {
+    "toast.detail": "We'll be in touch within 24 hours.",
+
     "hero.badge": "Elite AI Engineering Collective",
     "hero.heading_from": "From",
     "hero.heading_to": "to",
