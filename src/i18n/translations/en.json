@@ -9,6 +9,10 @@
     "lang.de": "DE",
     "lang.fr": "FR",
     "lang.es": "ES",
+    "lang.it": "IT",
+    "lang.pl": "PL",
+    "lang.ru": "RU",
+    "lang.tr": "TR",
 
     "theme.toggle_dark": "Switch to dark mode",
     "theme.toggle_light": "Switch to light mode",

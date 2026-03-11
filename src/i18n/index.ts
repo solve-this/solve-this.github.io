@@ -31,21 +31,25 @@ const localeModules: Record<string, RawLocaleFile> = {
   en: enRaw as RawLocaleFile,
 }
 
+/**
+ * Attempts to dynamically import a locale file and register it under the given key.
+ * Silently skips if the file is absent (e.g. before `fetch-translations` has run).
+ */
+async function loadLocale(code: string, fileName: string): Promise<void> {
+  try {
+    const raw = await import(`./translations/${fileName}.json`).catch(() => null)
+    if (raw) localeModules[code] = (raw.default ?? raw) as RawLocaleFile
+  } catch { /* locale not yet generated */ }
+}
+
 // Attempt to import generated locale files (gracefully absent on first run)
-try {
-  const deRaw = await import('./translations/de.json').catch(() => null)
-  if (deRaw) localeModules['de'] = (deRaw.default ?? deRaw) as RawLocaleFile
-} catch { /* locale not yet generated */ }
-
-try {
-  const frRaw = await import('./translations/fr.json').catch(() => null)
-  if (frRaw) localeModules['fr'] = (frRaw.default ?? frRaw) as RawLocaleFile
-} catch { /* locale not yet generated */ }
-
-try {
-  const esRaw = await import('./translations/es.json').catch(() => null)
-  if (esRaw) localeModules['es'] = (esRaw.default ?? esRaw) as RawLocaleFile
-} catch { /* locale not yet generated */ }
+await loadLocale('de', 'de-de')
+await loadLocale('es', 'es-es')
+await loadLocale('fr', 'fr-fr')
+await loadLocale('it', 'it-it')
+await loadLocale('pl', 'pl-pl')
+await loadLocale('ru', 'ru-ru')
+await loadLocale('tr', 'tr-tr')
 
 /** Returns true if `value` is an existing nested MessageTree node (safe to reuse). */
 function isExistingTree(value: string | MessageTree | undefined): value is MessageTree {
