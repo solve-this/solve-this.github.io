@@ -6,8 +6,8 @@
  * translations from the Google Spreadsheet and writes locale JSON files to
  * src/i18n/translations/.
  *
- * Sheet tabs processed: i18n  (nav, lang, toast)
- *                       landingPage  (hero, services, expertise, contact, footer, meta)
+ * Sheet tabs processed: i18n       (lang.*)
+ *                       landingPage (nav, theme, toast, hero, services, expertise, contact, footer, meta)
  *
  * Uses: @el-j/google-sheet-translations  (v2.0.0)
  * Sheet: https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g

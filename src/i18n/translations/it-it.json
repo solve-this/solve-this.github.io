@@ -1,17 +1,15 @@
 {
   "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
+    "lang.en": "EN",
+    "lang.de": "DE",
+    "lang.fr": "FR",
+    "lang.es": "ES",
+    "lang.it": "IT",
+    "lang.pl": "PL",
+    "lang.ru": "RU",
+    "lang.tr": "TR"
   },
   "landingPage": {
-    "page_title": "solve-this",
-    "page_description": "risolviamo ciò che serve",
     "hero.badge": "Collettivo di ingegneria dell'intelligenza artificiale d'élite",
     "hero.heading_from": "Da",
     "hero.heading_to": "A",
