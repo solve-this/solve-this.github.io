@@ -93,6 +93,14 @@
     "footer.tagline": "Inżynieria elitarnej sztucznej inteligencji",
     "footer.copyright": "© 2025 solve.this. Wszelkie prawa zastrzeżone.",
     "meta.title": "solve.this — elitarna inżynieria sztucznej inteligencji",
-    "meta.description": "solve.this — Elite AI Engineering Collective. Tworzymy rozwiązania do precyzyjnego dostrajania LLM klasy produkcyjnej, przepływy pracy oparte na agentach i systemy RAG."
+    "meta.description": "solve.this — Elite AI Engineering Collective. Tworzymy rozwiązania do precyzyjnego dostrajania LLM klasy produkcyjnej, przepływy pracy oparte na agentach i systemy RAG.",
+    "nav.services": "Usługi",
+    "nav.expertise": "Ekspertyza",
+    "nav.contact": "Kontakt",
+    "nav.get_started": "Zacznij",
+    "theme.toggle_dark": "Przełącz na tryb ciemny",
+    "theme.toggle_light": "Przełącz na tryb światła",
+    "toast.summary": "Wiadomość otrzymana",
+    "toast.detail": "Skontaktujemy się z Tobą w ciągu 24 godzin."
   }
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useHead } from '@unhead/vue'
 import MatrixRain from './components/MatrixRain.vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -8,24 +9,20 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { availableLocales, localeNativeNames } from './i18n/index'
+import { localeNativeNames } from './i18n/index'
+import { LOCALE_CODES } from './router'
 
 const toast = useToast()
 const { t, locale } = useI18n({ useScope: 'global' })
 
-// ── Dynamic page title + locale persistence ───────────────────────────────────
-watch(locale, (newLocale) => {
-  document.title = t('meta.title')
-  // Persist locale so it can be restored on the next page load.
-  // Only write when the stored value differs to avoid a redundant write
-  // when onMounted restores the saved locale and triggers this watcher.
-  // Guard against SecurityError / QuotaExceededError (private browsing, etc.).
-  try {
-    if (localStorage.getItem('locale') !== newLocale) {
-      localStorage.setItem('locale', newLocale)
-    }
-  } catch { /* localStorage unavailable — preference is not persisted */ }
-}, { immediate: true })
+// ── Head metadata (title, description, lang) — SSR-aware via @unhead/vue ─────
+// vite-ssg injects @unhead/vue automatically; useHead() works both in SSR and
+// on the client so the pre-rendered HTML gets correct per-locale meta tags.
+useHead(computed(() => ({
+  title: t('meta.title'),
+  meta: [{ name: 'description', content: t('meta.description') }],
+  htmlAttrs: { lang: locale.value },
+})))
 
 // ── Theme (dark / light) ──────────────────────────────────────────────────────
 const isDark = ref(true)
@@ -41,12 +38,16 @@ function toggleTheme(): void {
 }
 
 // ── Matrix loading ────────────────────────────────────────────────────────────
-const showMatrix = ref(true)
-const contentVisible = ref(false)
+// `isMounted` stays false during SSR so MatrixRain is never rendered in the
+// pre-rendered HTML.  It becomes true in onMounted (client-only), which then
+// starts the animation.  All content is always rendered — the MatrixRain
+// overlay covers it during the animation; content is present in the static
+// HTML for crawlers and fast first paint.
+const isMounted = ref(false)
+const showMatrix = ref(false)
 
 function onMatrixDone() {
   showMatrix.value = false
-  setTimeout(() => { contentVisible.value = true }, 80)
 }
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
@@ -88,19 +89,9 @@ function setupObserver(): void {
   document.querySelectorAll('.reveal').forEach(el => observer!.observe(el))
 }
 
-watch(contentVisible, (val) => {
-  if (val) nextTick(setupObserver)
-})
-
 onMounted(() => {
-  // Restore saved locale preference.
-  // Guard against SecurityError in restricted environments (private browsing, etc.).
-  try {
-    const savedLocale = localStorage.getItem('locale')
-    if (savedLocale && availableLocales.includes(savedLocale)) {
-      locale.value = savedLocale
-    }
-  } catch { /* localStorage unavailable — use detected locale */ }
+  isMounted.value = true
+  showMatrix.value = true
 
   // Restore saved theme preference
   try {
@@ -108,6 +99,8 @@ onMounted(() => {
     if (saved) isDark.value = saved === 'dark'
   } catch { /* localStorage unavailable — use default theme */ }
   applyTheme(isDark.value)
+
+  nextTick(setupObserver)
 
   window.addEventListener('mousemove', moveCursor)
   window.addEventListener('scroll', onScroll, { passive: true })
@@ -127,18 +120,30 @@ const navLinks = computed(() => [
   { label: t('nav.contact'), href: '#contact' },
 ])
 
-/** Returns the display label for a locale code (e.g. 'en' → 'EN') */
+/** Returns the short display label for a locale code (e.g. 'en' → 'EN') */
 function localeName(loc: string): string {
-  return t(`lang.${loc}`, loc.toUpperCase())
+  return loc.toUpperCase()
 }
 
 /** Options array for the PrimeVue Select language switcher */
 const localeOptions = computed(() =>
-  availableLocales.map(loc => ({
+  LOCALE_CODES.map(loc => ({
     label: localeNativeNames[loc] ?? loc.toUpperCase(),
     value: loc,
   }))
 )
+
+/**
+ * Navigate to the pre-rendered page for the selected locale.
+ * A full page load is used so the browser fetches the correct static HTML file.
+ * Strips any trailing slash from BASE_URL before appending the locale segment
+ * so we never produce double-slash paths (e.g. `/app//de/`).
+ */
+function switchLocale(newLocale: string): void {
+  const base = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
+  const path = newLocale === 'en' ? `${base}/` : `${base}/${newLocale}/`
+  window.location.href = path
+}
 
 // ── Hero word cycle ───────────────────────────────────────────────────────────
 const phaseIndex = ref(0)
@@ -325,9 +330,9 @@ async function submitForm() {
 </script>
 
 <template>
-  <!-- Matrix loading overlay -->
+  <!-- Matrix loading overlay — only rendered on the client (isMounted is false during SSR) -->
   <Transition name="matrix-fade">
-    <MatrixRain v-if="showMatrix" @complete="onMatrixDone" />
+    <MatrixRain v-if="isMounted && showMatrix" @complete="onMatrixDone" />
   </Transition>
 
   <!-- Custom cursor — positioned at origin, moved via transform for GPU compositing -->
@@ -338,7 +343,7 @@ async function submitForm() {
   <div
     class="min-h-screen overflow-x-hidden"
     :data-theme="isDark ? 'dark' : 'light'"
-    :style="{ background: 'var(--clr-bg)', color: 'var(--clr-text-1)', opacity: contentVisible ? 1 : 0, transition: 'opacity 0.8s ease, background 0.35s ease, color 0.35s ease' }"
+    :style="{ background: 'var(--clr-bg)', color: 'var(--clr-text-1)', transition: 'background 0.35s ease, color 0.35s ease' }"
   >
     <Toast position="top-right" />
 
@@ -374,10 +379,11 @@ async function submitForm() {
             >{{ link.label }}</a>
             <!-- Language switcher (desktop) -->
             <Select
-              v-model="locale"
+              :model-value="locale"
               :options="localeOptions"
               option-label="label"
               option-value="value"
+              @update:model-value="switchLocale"
               class="lang-select interactive"
               aria-label="Select language"
             >
@@ -422,7 +428,7 @@ async function submitForm() {
         </div>
 
         <Transition name="slide-down">
-          <nav v-if="mobileMenuOpen" class="md:hidden pb-4 pt-3 border-t" style="border-color:rgba(245,158,11,0.1)">
+          <nav v-if="mobileMenuOpen" class="md:hidden pb-4 pt-3 border-t" style="border-color:rgba(245,158,11,0.1);background:var(--clr-glass,rgba(18,14,9,0.85));backdrop-filter:blur(20px)">
             <div class="flex flex-col gap-3">
               <a
                 v-for="link in navLinks"
@@ -434,10 +440,11 @@ async function submitForm() {
               >{{ link.label }}</a>
               <!-- Language switcher (mobile) -->
               <Select
-                v-model="locale"
+                :model-value="locale"
                 :options="localeOptions"
                 option-label="label"
                 option-value="value"
+                @update:model-value="switchLocale"
                 class="lang-select lang-select-mobile interactive"
                 aria-label="Select language"
               >
@@ -498,7 +505,7 @@ async function submitForm() {
       <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
         <!-- Badge -->
         <Transition name="fade-up" appear>
-          <div v-if="contentVisible" class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium mb-8 interactive" style="color:#f59e0b;border-color:rgba(245,158,11,0.2)">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium mb-8 interactive" style="color:#f59e0b;border-color:rgba(245,158,11,0.2)">
             <span class="w-2 h-2 rounded-full animate-pulse" style="background:#f59e0b" />
             {{ t('hero.badge') }}
           </div>
@@ -506,7 +513,7 @@ async function submitForm() {
 
         <!-- H1 word cycle -->
         <Transition name="fade-up" appear>
-          <div v-if="contentVisible" class="mb-6">
+          <div class="mb-6">
             <h1 class="font-black leading-[1.05] tracking-tight" style="font-size:clamp(3rem,8vw,5.5rem)">
               <span class="block" style="color:#fef3c7">{{ t('hero.heading_from') }}</span>
               <span class="block relative overflow-hidden" style="height:1.15em">
@@ -522,7 +529,6 @@ async function submitForm() {
         <!-- Tagline -->
         <Transition name="fade-up" appear>
           <i18n-t
-            v-if="contentVisible"
             keypath="hero.tagline"
             tag="p"
             class="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
@@ -539,7 +545,7 @@ async function submitForm() {
 
         <!-- CTAs -->
         <Transition name="fade-up" appear>
-          <div v-if="contentVisible" class="flex flex-col sm:flex-row gap-4 justify-center items-center" style="animation-delay:0.4s">
+          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center" style="animation-delay:0.4s">
             <a
               href="#contact"
               class="btn-amber px-8 py-4 rounded-xl text-base font-bold w-full sm:w-auto interactive"

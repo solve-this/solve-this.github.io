@@ -47,7 +47,7 @@
     "expertise.heading": "Erstellt von",
     "expertise.heading_highlight": "Experten",
     "expertise.heading_suffix": "Nicht pünktliche Ingenieure",
-    "expertise.description": "Fundierte Forschungserfahrung, Produktionserfahrung und der unbedingte Wille, alles richtig zu machen.",
+    "expertise.description": "Tiefgreifende Forschungserfahrung, Produktionsfehler und die Besessenheit, alles richtig zu machen.",
     "expertise.core_competencies": "Kernkompetenzen",
     "expertise.our_tech_stack": "Unser Technologie-Stack",
     "expertise.why_title": "Warum sollte man das lösen?",
@@ -93,6 +93,14 @@
     "footer.tagline": "Elite-KI-Engineering",
     "footer.copyright": "© 2025 solve.this. Alle Rechte vorbehalten.",
     "meta.title": "solve.this — Elite AI Engineering",
-    "meta.description": "solve.this – Elite AI Engineering Collective. Wir entwickeln produktionsreife LLM-Feinabstimmungs-, agentenbasierte Workflows und RAG-Systeme."
+    "meta.description": "solve.this – Elite AI Engineering Collective. Wir entwickeln produktionsreife LLM-Feinabstimmungs-, agentenbasierte Workflows und RAG-Systeme.",
+    "nav.services": "Dienstleistungen",
+    "nav.expertise": "Sachverstand",
+    "nav.contact": "Kontakt",
+    "nav.get_started": "Los geht's",
+    "theme.toggle_dark": "In den Dunkelmodus wechseln",
+    "theme.toggle_light": "In den Lichtmodus wechseln",
+    "toast.summary": "Nachricht empfangen",
+    "toast.detail": "Wir melden uns innerhalb von 24 Stunden bei Ihnen."
   }
 }

@@ -93,6 +93,14 @@
     "footer.tagline": "Ingeniería de IA de élite",
     "footer.copyright": "© 2025 solve.this. Todos los derechos reservados.",
     "meta.title": "solve.this — Ingeniería de IA de élite",
-    "meta.description": "solve.this — Colectivo de Ingeniería de IA de élite. Diseñamos sistemas de optimización LLM de alto rendimiento, flujos de trabajo con agentes y RAG."
+    "meta.description": "solve.this — Colectivo de Ingeniería de IA de élite. Diseñamos sistemas de optimización LLM de alto rendimiento, flujos de trabajo con agentes y RAG.",
+    "nav.services": "Servicios",
+    "nav.expertise": "Pericia",
+    "nav.contact": "Contacto",
+    "nav.get_started": "Empezar",
+    "theme.toggle_dark": "Cambiar al modo oscuro",
+    "theme.toggle_light": "Cambiar al modo claro",
+    "toast.summary": "Mensaje recibido",
+    "toast.detail": "Nos pondremos en contacto contigo en 24 horas."
   }
 }

@@ -76,7 +76,7 @@
     "contact.form_service": "Hizmet Gerekli",
     "contact.form_message": "Proje Özeti *",
     "contact.form_name_placeholder": "Ada Lovelace",
-    "contact.form_email_placeholder": "ada@şirket.ai",
+    "contact.form_email_placeholder": "ada@company.ai",
     "contact.form_company_placeholder": "Acme Corp",
     "contact.form_service_placeholder": "Bir hizmet seçin...",
     "contact.form_message_placeholder": "Yapay zekâ ile ilgili karşılaştığınız zorluğu, mevcut teknoloji yığınını ve zaman çizelgesini açıklayın...",
@@ -93,6 +93,14 @@
     "footer.tagline": "Seçkin Yapay Zeka Mühendisliği",
     "footer.copyright": "© 2025 solve.this. Tüm hakları saklıdır.",
     "meta.title": "solve.this — Elite AI Engineering",
-    "meta.description": "solve.this — Seçkin Yapay Zeka Mühendisliği Kolektifi. Üretim kalitesinde LLM ince ayarı, ajan tabanlı iş akışları ve RAG sistemleri tasarlıyoruz."
+    "meta.description": "solve.this — Seçkin Yapay Zeka Mühendisliği Kolektifi. Üretim kalitesinde LLM ince ayarı, ajan tabanlı iş akışları ve RAG sistemleri tasarlıyoruz.",
+    "nav.services": "Hizmetler",
+    "nav.expertise": "Uzmanlık",
+    "nav.contact": "Temas etmek",
+    "nav.get_started": "Başlayın",
+    "theme.toggle_dark": "Karanlık moda geç",
+    "theme.toggle_light": "Açık moda geç",
+    "toast.summary": "Mesaj Alındı",
+    "toast.detail": "24 saat içinde sizinle iletişime geçeceğiz."
   }
 }
