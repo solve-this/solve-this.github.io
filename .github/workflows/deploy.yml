@@ -35,7 +35,7 @@ jobs:
       # Fetch translations using the bundled GitHub Action (no extra Node setup needed).
       # The action writes locale JSON files to src/i18n/translations/ before the build.
       - name: Fetch translations from Google Sheets
-        uses: el-j/google-sheet-translations@v1.4.0
+        uses: el-j/google-sheet-translations@v2
         with:
           google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
           google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}

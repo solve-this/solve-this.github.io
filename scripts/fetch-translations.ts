@@ -6,14 +6,14 @@
  * translations from the Google Spreadsheet and writes locale JSON files to
  * src/i18n/translations/.
  *
- * Sheet tabs processed: i18n  (nav, lang, toast)
- *                       landingPage  (hero, services, expertise, contact, footer, meta)
+ * Sheet tabs processed: i18n       (lang.*)
+ *                       landingPage (nav, theme, toast, hero, services, expertise, contact, footer, meta)
  *
- * Uses: @el-j/google-sheet-translations  (v1.4.0)
+ * Uses: @el-j/google-sheet-translations  (v2.0.0)
  * Sheet: https://docs.google.com/spreadsheets/d/1m3TlNDa8J6bbXcbgqTOcH-UZdtxtqYJay3auj_xHA7g
  *
  * Run-modes:
- *   CI/CD (primary):  The `el-j/google-sheet-translations@v1.4.0` GitHub Action runs
+ *   CI/CD (primary):  The `el-j/google-sheet-translations@v2` GitHub Action runs
  *     BEFORE this script in CI workflows and writes translation files directly.
  *     Set SKIP_PREBUILD_FETCH=1 in the build step env to skip this script entirely.
  *   Authenticated (local): credentials from .env or CI env:

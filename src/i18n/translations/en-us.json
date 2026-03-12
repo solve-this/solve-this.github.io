@@ -7,19 +7,7 @@
     "ru-ru": "Pусский",
     "tr-tr": "Türkçe",
     "es-es": "Español",
-    "it-it": "Italiano",
-    "nav.services": "Services",
-    "nav.expertise": "Expertise",
-    "nav.contact": "Contact",
-    "nav.get_started": "Get Started",
-    "lang.en": "EN",
-    "lang.de": "DE",
-    "lang.fr": "FR",
-    "lang.es": "ES",
-    "theme.toggle_dark": "Switch to dark mode",
-    "theme.toggle_light": "Switch to light mode",
-    "toast.summary": "Message Received",
-    "toast.detail": "We'll be in touch within 24 hours."
+    "it-it": "Italiano"
   },
   "landingPage": {
     "page_title": "solve-this",

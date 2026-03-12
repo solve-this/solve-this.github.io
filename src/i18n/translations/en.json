@@ -1,22 +1,25 @@
 {
   "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
+  "landingPage": {
+    "page_title": "solve-this",
+    "page_description": "we solve what is needed",
     "nav.services": "Services",
     "nav.expertise": "Expertise",
     "nav.contact": "Contact",
     "nav.get_started": "Get Started",
-
-    "lang.en": "EN",
-    "lang.de": "DE",
-    "lang.fr": "FR",
-    "lang.es": "ES",
-
     "theme.toggle_dark": "Switch to dark mode",
     "theme.toggle_light": "Switch to light mode",
-
     "toast.summary": "Message Received",
-    "toast.detail": "We'll be in touch within 24 hours."
-  },
-  "landingPage": {
+    "toast.detail": "We'll be in touch within 24 hours.",
     "hero.badge": "Elite AI Engineering Collective",
     "hero.heading_from": "From",
     "hero.heading_to": "to",
@@ -34,7 +37,6 @@
     "hero.stat_tokens_daily": "Tokens Processed Daily",
     "hero.stat_uptime": "Uptime SLA",
     "hero.stat_latency": "Avg Inference Latency",
-
     "services.badge": "What We Build",
     "services.heading": "AI Services,",
     "services.heading_highlight": "Production-Ready",
@@ -49,7 +51,6 @@
     "services.strategy_description": "From proof-of-concept to production. We audit your AI stack and deliver a roadmap for scalable intelligence.",
     "services.safety_title": "AI Safety & Alignment",
     "services.safety_description": "Production guardrails, red-teaming, and compliance frameworks ensuring your models behave reliably at scale.",
-
     "expertise.badge": "Technical Depth",
     "expertise.heading": "Built by",
     "expertise.heading_highlight": "Experts",
@@ -68,7 +69,6 @@
     "expertise.skill_mlops": "MLOps & Deployment",
     "expertise.skill_multimodal": "Multi-modal AI",
     "expertise.skill_ai_security": "AI Security",
-
     "contact.badge": "Let's Build Together",
     "contact.heading": "Ready to Ship",
     "contact.heading_highlight": "Real AI",
@@ -98,10 +98,8 @@
     "contact.service_strategy": "AI Strategy & Audit",
     "contact.service_safety": "AI Safety & Alignment",
     "contact.service_other": "Other / Not sure yet",
-
     "footer.tagline": "Elite AI Engineering",
     "footer.copyright": "© 2025 solve.this. All rights reserved.",
-
     "meta.title": "solve.this — Elite AI Engineering",
     "meta.description": "solve.this — Elite AI Engineering Collective. We architect production-grade LLM fine-tuning, agentic workflows, and RAG systems."
   }
