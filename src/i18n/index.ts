@@ -91,7 +91,16 @@ function normalise(raw: RawLocaleFile): MessageTree {
     }
     return acc
   }, {})
-  return expandDotKeys(flat)
+  // Escape bare `@` that is NOT part of `@:key` linked-message syntax.
+  // The vue-i18n SSR message compiler treats any `@` as the start of a linked
+  // message and fails with INVALID_LINKED_FORMAT when the `@` is followed by a
+  // regular character (e.g. `ada@company.ai`).
+  // `{'@'}` is the vue-i18n literal-string escape that renders as plain `@`.
+  const escaped: SheetMap = {}
+  for (const [k, v] of Object.entries(flat)) {
+    escaped[k] = typeof v === 'string' ? v.replace(/@(?![:.])/g, "{'@'}") : v
+  }
+  return expandDotKeys(escaped)
 }
 
 /**
@@ -136,13 +145,23 @@ function detectLocale(): string {
   return availableLocales.includes(lang) ? lang : 'en'
 }
 
-const i18n = createI18n({
-  legacy: false,          // Composition API mode
-  locale: detectLocale(),
-  fallbackLocale: 'en',
-  messages,
-  missingWarn: false,
-  fallbackWarn: false,
-})
+/**
+ * Create a new vue-i18n instance for the given locale.
+ *
+ * Called once per page during SSG so each pre-rendered HTML file gets its own
+ * isolated i18n instance — avoids the race condition that occurs when a shared
+ * singleton's locale is mutated mid-render in parallel SSG workers.
+ * On the client side it is called once with the locale derived from the URL.
+ */
+export function createAppI18n(locale?: string) {
+  return createI18n({
+    legacy: false,          // Composition API mode
+    locale: locale ?? detectLocale(),
+    fallbackLocale: 'en',
+    messages,
+    missingWarn: false,
+    fallbackWarn: false,
+  })
+}
 
-export default i18n
+export default createAppI18n()
