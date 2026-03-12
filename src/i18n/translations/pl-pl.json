@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "rozwiązujemy to co jest potrzebne",
@@ -94,5 +84,15 @@
     "footer.copyright": "© 2025 solve.this. Wszelkie prawa zastrzeżone.",
     "meta.title": "solve.this — elitarna inżynieria sztucznej inteligencji",
     "meta.description": "solve.this — Elite AI Engineering Collective. Tworzymy rozwiązania do precyzyjnego dostrajania LLM klasy produkcyjnej, przepływy pracy oparte na agentach i systemy RAG."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

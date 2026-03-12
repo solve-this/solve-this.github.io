@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "we solve what is needed",
@@ -102,5 +92,15 @@
     "theme.toggle_light": "Switch to light mode",
     "toast.summary": "Message Received",
     "toast.detail": "We'll be in touch within 24 hours."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

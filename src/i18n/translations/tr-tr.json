@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "İhtiyaç duyulanı çözüyoruz.",
@@ -94,5 +84,15 @@
     "footer.copyright": "© 2025 solve.this. Tüm hakları saklıdır.",
     "meta.title": "solve.this — Elite AI Engineering",
     "meta.description": "solve.this — Seçkin Yapay Zeka Mühendisliği Kolektifi. Üretim kalitesinde LLM ince ayarı, ajan tabanlı iş akışları ve RAG sistemleri tasarlıyoruz."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

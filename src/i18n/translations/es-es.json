@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Resolvemos lo que se necesita",
@@ -94,5 +84,15 @@
     "footer.copyright": "© 2025 solve.this. Todos los derechos reservados.",
     "meta.title": "solve.this — Ingeniería de IA de élite",
     "meta.description": "solve.this — Colectivo de Ingeniería de IA de élite. Diseñamos sistemas de optimización LLM de alto rendimiento, flujos de trabajo con agentes y RAG."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

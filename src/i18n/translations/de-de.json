@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Wir lösen das, was nötig ist",
@@ -94,5 +84,15 @@
     "footer.copyright": "© 2025 solve.this. Alle Rechte vorbehalten.",
     "meta.title": "solve.this — Elite AI Engineering",
     "meta.description": "solve.this – Elite AI Engineering Collective. Wir entwickeln produktionsreife LLM-Feinabstimmungs-, agentenbasierte Workflows und RAG-Systeme."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

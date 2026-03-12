@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "мы решаем то, что необходимо",
@@ -94,5 +84,15 @@
     "footer.copyright": "© 2025 solve.this. Все права защищены.",
     "meta.title": "solve.this — Элитная разработка искусственного интеллекта",
     "meta.description": "solve.this — Элитный коллектив инженеров в области искусственного интеллекта. Мы разрабатываем системы тонкой настройки LLM, агентные рабочие процессы и RAG-системы, пригодные для использования в производственных условиях."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

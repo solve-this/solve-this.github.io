@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che serve",
@@ -94,5 +84,15 @@
     "footer.copyright": "© 2025 solve.this. Tutti i diritti riservati.",
     "meta.title": "solve.this — Ingegneria AI d'élite",
     "meta.description": "solve.this — Elite AI Engineering Collective. Progettiamo sistemi di fine-tuning LLM di livello produttivo, flussi di lavoro agenti e sistemi RAG."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }
