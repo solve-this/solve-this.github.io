@@ -24,6 +24,6 @@ export const routes: RouteRecordRaw[] = LOCALE_CODES.map(locale => ({
  * e.g. `/de/` → `'de'`, `/` → `'en'`
  */
 export function localeFromPath(path: string): LocaleCode {
-  const seg = path.replace(/^\/|\/$/g, '').split('/')[0] as LocaleCode
-  return LOCALE_CODES.includes(seg) ? seg : 'en'
+  const seg = path.replace(/^\/|\/$/g, '').split('/')[0]
+  return LOCALE_CODES.includes(seg as LocaleCode) ? (seg as LocaleCode) : 'en'
 }

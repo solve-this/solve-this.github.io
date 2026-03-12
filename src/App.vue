@@ -9,7 +9,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { availableLocales, localeNativeNames } from './i18n/index'
+import { localeNativeNames } from './i18n/index'
 import { LOCALE_CODES } from './router'
 
 const toast = useToast()
@@ -127,7 +127,7 @@ function localeName(loc: string): string {
 
 /** Options array for the PrimeVue Select language switcher */
 const localeOptions = computed(() =>
-  LOCALE_CODES.filter(loc => availableLocales.includes(loc)).map(loc => ({
+  LOCALE_CODES.map(loc => ({
     label: localeNativeNames[loc] ?? loc.toUpperCase(),
     value: loc,
   }))
@@ -135,11 +135,13 @@ const localeOptions = computed(() =>
 
 /**
  * Navigate to the pre-rendered page for the selected locale.
- * A full navigation is used so the browser loads the correct static HTML file.
+ * A full page load is used so the browser fetches the correct static HTML file.
+ * Strips any trailing slash from BASE_URL before appending the locale segment
+ * so we never produce double-slash paths (e.g. `/app//de/`).
  */
 function switchLocale(newLocale: string): void {
-  const base = (import.meta.env.BASE_URL as string) || '/'
-  const path = newLocale === 'en' ? base : `${base}${newLocale}/`
+  const base = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
+  const path = newLocale === 'en' ? `${base}/` : `${base}/${newLocale}/`
   window.location.href = path
 }
 
