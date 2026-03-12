@@ -1,15 +1,17 @@
 {
   "i18n": {
-    "lang.en": "EN",
-    "lang.de": "DE",
-    "lang.fr": "FR",
-    "lang.es": "ES",
-    "lang.it": "IT",
-    "lang.pl": "PL",
-    "lang.ru": "RU",
-    "lang.tr": "TR"
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   },
   "landingPage": {
+    "page_title": "solve-this",
+    "page_description": "мы решаем то, что необходимо",
     "hero.badge": "Элитный коллектив инженеров в области искусственного интеллекта",
     "hero.heading_from": "От",
     "hero.heading_to": "к",
