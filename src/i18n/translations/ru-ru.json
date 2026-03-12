@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "мы решаем то, что необходимо",
@@ -83,16 +93,14 @@
     "footer.tagline": "Элитная разработка искусственного интеллекта",
     "footer.copyright": "© 2025 solve.this. Все права защищены.",
     "meta.title": "solve.this — Элитная разработка искусственного интеллекта",
-    "meta.description": "solve.this — Элитный коллектив инженеров в области искусственного интеллекта. Мы разрабатываем системы тонкой настройки LLM, агентные рабочие процессы и RAG-системы, пригодные для использования в производственных условиях."
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
+    "meta.description": "solve.this — Элитный коллектив инженеров в области искусственного интеллекта. Мы разрабатываем системы тонкой настройки LLM, агентные рабочие процессы и RAG-системы, пригодные для использования в производственных условиях.",
+    "nav.services": "Услуги",
+    "nav.expertise": "Экспертиза",
+    "nav.contact": "Контакт",
+    "nav.get_started": "Начать",
+    "theme.toggle_dark": "Переключиться в темный режим",
+    "theme.toggle_light": "Переключиться в светлый режим",
+    "toast.summary": "Сообщение получено",
+    "toast.detail": "Мы свяжемся с вами в течение 24 часов."
   }
 }

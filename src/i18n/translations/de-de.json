@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Wir lösen das, was nötig ist",
@@ -83,16 +93,14 @@
     "footer.tagline": "Elite-KI-Engineering",
     "footer.copyright": "© 2025 solve.this. Alle Rechte vorbehalten.",
     "meta.title": "solve.this — Elite AI Engineering",
-    "meta.description": "solve.this – Elite AI Engineering Collective. Wir entwickeln produktionsreife LLM-Feinabstimmungs-, agentenbasierte Workflows und RAG-Systeme."
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
+    "meta.description": "solve.this – Elite AI Engineering Collective. Wir entwickeln produktionsreife LLM-Feinabstimmungs-, agentenbasierte Workflows und RAG-Systeme.",
+    "nav.services": "Dienstleistungen",
+    "nav.expertise": "Sachverstand",
+    "nav.contact": "Kontakt",
+    "nav.get_started": "Los geht's",
+    "theme.toggle_dark": "In den Dunkelmodus wechseln",
+    "theme.toggle_light": "In den Lichtmodus wechseln",
+    "toast.summary": "Nachricht empfangen",
+    "toast.detail": "Wir melden uns innerhalb von 24 Stunden bei Ihnen."
   }
 }

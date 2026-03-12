@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che serve",
@@ -83,16 +93,14 @@
     "footer.tagline": "Ingegneria dell'intelligenza artificiale d'élite",
     "footer.copyright": "© 2025 solve.this. Tutti i diritti riservati.",
     "meta.title": "solve.this — Ingegneria AI d'élite",
-    "meta.description": "solve.this — Elite AI Engineering Collective. Progettiamo sistemi di fine-tuning LLM di livello produttivo, flussi di lavoro agenti e sistemi RAG."
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
+    "meta.description": "solve.this — Elite AI Engineering Collective. Progettiamo sistemi di fine-tuning LLM di livello produttivo, flussi di lavoro agenti e sistemi RAG.",
+    "nav.services": "Servizi",
+    "nav.expertise": "Competenza",
+    "nav.contact": "Contatto",
+    "nav.get_started": "Per iniziare",
+    "theme.toggle_dark": "Passa alla modalità scura",
+    "theme.toggle_light": "Passa alla modalità luce",
+    "toast.summary": "Messaggio ricevuto",
+    "toast.detail": "Ti contatteremo entro 24 ore."
   }
 }
