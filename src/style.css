@@ -19,6 +19,11 @@ html { scroll-behavior: smooth; }
   --clr-scrollbar: #d97706;
   --clr-scrollbar-track: #0c0a09;
   --clr-overlay-select: #1a1208;
+  --hero-title: #fef3c7;
+  --hero-tagline: #a78060;
+  --hero-brand: #fef3c7;
+  --expertise-bg: linear-gradient(135deg, #0c0a09, rgba(124, 58, 237, 0.04), #0c0a09);
+  --skill-track: rgba(60, 40, 20, 0.6);
 }
 
 [data-theme="light"] {
@@ -35,6 +40,11 @@ html { scroll-behavior: smooth; }
   --clr-scrollbar: #b45309;
   --clr-scrollbar-track: #fffbeb;
   --clr-overlay-select: #fef9e8;
+  --hero-title: #1c1917;
+  --hero-tagline: #5f3b1f;
+  --hero-brand: #b45309;
+  --expertise-bg: radial-gradient(circle at 22% 22%, rgba(245, 158, 11, 0.08), transparent 42%), linear-gradient(135deg, #fff7ed, #fdf2e9, #f5eafe);
+  --skill-track: rgba(180, 83, 9, 0.16);
 }
 
 body {
@@ -196,4 +206,3 @@ body {
   animation: spore-rise linear infinite;
   pointer-events: none;
 }
-

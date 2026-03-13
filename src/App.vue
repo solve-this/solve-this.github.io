@@ -515,13 +515,13 @@ async function submitForm() {
         <Transition name="fade-up" appear>
           <div class="mb-6">
             <h1 class="font-black leading-[1.05] tracking-tight" style="font-size:clamp(3rem,8vw,5.5rem)">
-              <span class="block" style="color:#fef3c7">{{ t('hero.heading_from') }}</span>
+              <span class="block" style="color:var(--hero-title)">{{ t('hero.heading_from') }}</span>
               <span class="block relative overflow-hidden" style="height:1.15em">
                 <Transition name="word-swap" mode="out-in">
                   <span :key="currentPhase" class="gradient-text block">{{ currentPhase }}</span>
                 </Transition>
               </span>
-              <span class="block" style="color:#fef3c7">{{ t('hero.heading_to') }} <span class="gradient-text">{{ t('hero.phase_solution') }}</span></span>
+              <span class="block" style="color:var(--hero-title)">{{ t('hero.heading_to') }} <span class="gradient-text">{{ t('hero.phase_solution') }}</span></span>
             </h1>
           </div>
         </Transition>
@@ -532,10 +532,10 @@ async function submitForm() {
             keypath="hero.tagline"
             tag="p"
             class="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
-            style="color:#a78060;animation-delay:0.2s"
+            style="color:var(--hero-tagline);animation-delay:0.2s"
           >
             <template #brand>
-              <strong style="color:#fef3c7"> {{ t('hero.tagline_brand') }}</strong>
+              <strong style="color:var(--hero-brand)"> {{ t('hero.tagline_brand') }}</strong>
             </template>
             <template #highlight>
               <em class="not-italic font-semibold" style="color:#f59e0b">{{ t('hero.tagline_highlight') }}</em>
@@ -648,7 +648,7 @@ async function submitForm() {
 
     <!-- ── EXPERTISE ──────────────────────────────────────────────────────── -->
     <section id="expertise" class="py-24 sm:py-32 relative overflow-hidden">
-      <div class="absolute inset-0 pointer-events-none" style="background:linear-gradient(135deg,#0c0a09,rgba(124,58,237,0.04),#0c0a09)" />
+      <div class="absolute inset-0 pointer-events-none" style="background:var(--expertise-bg)" />
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="text-center mb-16 reveal">
@@ -673,7 +673,7 @@ async function submitForm() {
                 <span class="text-sm font-medium transition-colors" style="color:#c8a070">{{ skill.label }}</span>
                 <span class="text-sm font-bold gradient-text">{{ skill.level }}%</span>
               </div>
-              <div class="h-2 rounded-full" style="background:rgba(60,40,20,0.6)">
+              <div class="h-2 rounded-full" style="background:var(--skill-track)">
                 <div
                   class="h-full rounded-full"
                   style="background:linear-gradient(90deg,#b45309,#f59e0b,#fbbf24)"
