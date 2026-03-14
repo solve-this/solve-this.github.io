@@ -12,20 +12,23 @@ import { useToast } from 'primevue/usetoast'
 import { localeNativeNames } from './i18n/index'
 import { LOCALE_CODES } from './router'
 
+const BASE_PATH = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
+
 const toast = useToast()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 // ── Head metadata (title, description, lang) — SSR-aware via @unhead/vue ─────
 // vite-ssg injects @unhead/vue automatically; useHead() works both in SSR and
 // on the client so the pre-rendered HTML gets correct per-locale meta tags.
-const alternateLinks = computed(() => {
-  const base = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
-  return LOCALE_CODES.map(loc => ({
-    rel: 'alternate',
-    hreflang: loc,
-    href: loc === 'en' ? `${base}/` : `${base}/${loc}/`,
-  }))
-})
+function localeHref(loc: string): string {
+  return loc === 'en' ? `${BASE_PATH}/` : `${BASE_PATH}/${loc}/`
+}
+
+const alternateLinks = computed(() => LOCALE_CODES.map(loc => ({
+  rel: 'alternate',
+  hreflang: loc,
+  href: localeHref(loc),
+})))
 useHead(computed(() => ({
   title: t('meta.title'),
   meta: [
@@ -155,9 +158,7 @@ const localeOptions = computed(() =>
  * so we never produce double-slash paths (e.g. `/app//de/`).
  */
 function switchLocale(newLocale: string): void {
-  const base = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
-  const path = newLocale === 'en' ? `${base}/` : `${base}/${newLocale}/`
-  window.location.href = path
+  window.location.href = localeHref(newLocale)
 }
 
 // ── Hero word cycle ───────────────────────────────────────────────────────────
@@ -335,6 +336,7 @@ const lastSubmitResult = ref<'idle' | 'sent' | 'skipped' | 'failed'>('idle')
 const lastSubmitError = ref<string | null>(null)
 const CONTACT_WEBHOOK_URL = import.meta.env.VITE_CONTACT_WEBHOOK_URL as string | undefined
 const CONTACT_SHEET_TARGET = (import.meta.env.VITE_CONTACT_SHEET_TARGET as string | undefined) || 'contact_requests'
+const CONTACT_SOURCE = (import.meta.env.VITE_CONTACT_SOURCE as string | undefined) || 'solve-this-landing'
 const contactWebhookConfigured = computed(() => Boolean(CONTACT_WEBHOOK_URL))
 const SUBMISSION_STATUS_DELAY_MS = 400
 const serviceOptions = computed(() => [
@@ -353,7 +355,11 @@ function loadSubmissionCount(): void {
   if (typeof window === 'undefined') return
   try {
     const stored = localStorage.getItem('contactSubmissionCount')
-    if (stored) submissionCount.value = Number(stored) || 0
+    if (stored !== null) {
+      // parse stored count (including "0"); default to 0 on invalid values
+      const parsed = Number.parseInt(stored, 10)
+      submissionCount.value = Number.isFinite(parsed) ? parsed : 0
+    }
   } catch { /* ignore localStorage errors */ }
 }
 function incrementSubmissionCount(): void {
@@ -377,8 +383,13 @@ async function sendToWebhook(payload: ContactPayload): Promise<'sent' | 'skipped
     }
     return 'sent'
   } catch (err) {
-    if (err instanceof TypeError) lastSubmitError.value = 'Network error occurred'
-    else lastSubmitError.value = (err as Error).message
+    if (err instanceof TypeError) {
+      lastSubmitError.value = err.message || 'Network error occurred'
+    } else if (err instanceof Error) {
+      lastSubmitError.value = err.message || 'Request failed'
+    } else {
+      lastSubmitError.value = 'Request failed'
+    }
     return 'failed'
   }
 }
@@ -406,7 +417,7 @@ async function submitForm() {
     timestamp: new Date().toISOString(),
     page: typeof window !== 'undefined' ? window.location.href : '',
     userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
-    source: 'solve-this-landing',
+    source: CONTACT_SOURCE,
   } satisfies ContactPayload
 
   incrementSubmissionCount()

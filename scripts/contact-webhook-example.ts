@@ -25,7 +25,8 @@ type ContactPayload = {
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
 const GOOGLE_SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets'
-const MAX_BODY_BYTES = 1_000_000 // 1MB upper limit for payload
+const MAX_BODY_BYTES = 1_048_576 // 1 MiB exact upper limit for payload
+const BASE64URL_ENCODING = 'base64url' as const
 
 function requireEnv(key: string): string {
   const value = process.env[key]
@@ -45,8 +46,8 @@ function buildServiceAccountAssertion(): string {
     exp: now + 3600,
     iat: now,
   }
-  const encode = (obj: unknown) => Buffer.from(JSON.stringify(obj)).toString('base64url')
-  const unsigned = `${encode(header)}.${encode(claimSet)}`
+  const encodeJsonToBase64Url = (data: unknown) => Buffer.from(JSON.stringify(data)).toString(BASE64URL_ENCODING)
+  const unsigned = `${encodeJsonToBase64Url(header)}.${encodeJsonToBase64Url(claimSet)}`
   const signer = createSign('RSA-SHA256')
   signer.update(unsigned)
   const signature = signer.sign(privateKey, 'base64url')
@@ -114,15 +115,29 @@ export async function handler(req: IncomingMessage, res: ServerResponse): Promis
     return
   }
 
-  let raw = ''
+  const chunks: Buffer[] = []
+  let totalBytes = 0
   for await (const chunk of req) {
-    raw += chunk
-    if (raw.length > MAX_BODY_BYTES) {
+    if (typeof chunk !== 'string' && !Buffer.isBuffer(chunk) && !(chunk instanceof Uint8Array)) {
+      res.statusCode = 400
+      res.end('Invalid payload chunk')
+      return
+    }
+
+    const buf = typeof chunk === 'string'
+      ? Buffer.from(chunk)
+      : Buffer.isBuffer(chunk)
+        ? chunk
+        : Buffer.from(chunk)
+    totalBytes += buf.length
+    if (totalBytes > MAX_BODY_BYTES) {
       res.statusCode = 413
       res.end('Payload Too Large')
       return
     }
+    chunks.push(buf)
   }
+  const raw = Buffer.concat(chunks).toString('utf-8')
 
   let payload: ContactPayload
   try {
