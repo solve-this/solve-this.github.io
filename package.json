@@ -33,6 +33,6 @@
     "vue-tsc": "^3.2.5"
   },
   "overrides": {
-    "undici": "^6.24.1"
+    "undici": "6.24.1"
   }
 }
