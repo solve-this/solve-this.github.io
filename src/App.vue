@@ -18,10 +18,24 @@ const { t, locale } = useI18n({ useScope: 'global' })
 // ── Head metadata (title, description, lang) — SSR-aware via @unhead/vue ─────
 // vite-ssg injects @unhead/vue automatically; useHead() works both in SSR and
 // on the client so the pre-rendered HTML gets correct per-locale meta tags.
+const alternateLinks = computed(() => {
+  const base = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
+  return LOCALE_CODES.map(loc => ({
+    rel: 'alternate',
+    hreflang: loc,
+    href: loc === 'en' ? `${base}/` : `${base}/${loc}/`,
+  }))
+})
 useHead(computed(() => ({
   title: t('meta.title'),
-  meta: [{ name: 'description', content: t('meta.description') }],
-  htmlAttrs: { lang: locale.value },
+  meta: [
+    { name: 'description', content: t('meta.description') },
+    // Hint browsers and Google Translate to avoid auto-translation of already localized HTML
+    { name: 'google', content: 'notranslate' },
+    { 'http-equiv': 'Content-Language', content: locale.value },
+  ],
+  link: alternateLinks.value,
+  htmlAttrs: { lang: locale.value, translate: 'no', class: 'notranslate' },
 })))
 
 // ── Theme (dark / light) ──────────────────────────────────────────────────────
@@ -433,6 +447,7 @@ async function submitForm() {
   <div
     class="min-h-screen overflow-x-hidden"
     :data-theme="isDark ? 'dark' : 'light'"
+    translate="no"
     :style="{ background: 'var(--clr-bg)', color: 'var(--clr-text-1)', transition: 'background 0.35s ease, color 0.35s ease' }"
   >
     <Toast position="top-right" />
