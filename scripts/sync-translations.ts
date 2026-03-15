@@ -54,7 +54,9 @@ if (!GOOGLE_CLIENT_EMAIL || !GOOGLE_PRIVATE_KEY || !GOOGLE_SPREADSHEET_ID) {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const SOURCE_LOCALE = 'en'
-const TARGET_LOCALES: readonly string[] = ['de', 'fr', 'es']
+// Keep target locales in lockstep with LOCALE_CODES (see src/router.ts) so the sheet
+// always has columns for every statically generated locale.
+const TARGET_LOCALES: readonly string[] = ['de', 'fr', 'es', 'it', 'pl', 'ru', 'tr']
 const SHEET_TITLES: readonly string[] = ['i18n', 'landingPage']
 
 // ── Paths ─────────────────────────────────────────────────────────────────────

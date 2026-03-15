@@ -38,3 +38,13 @@ npm run preview
 The site is deployed at `https://solve-this.github.io` from the `solve-this/solve-this.github.io` repository.
 
 The `VITE_BASE_PATH` env variable in `.github/workflows/deploy.yml` controls the Vite `base` option so assets are loaded from the correct path.
+
+## Contact form logging
+
+- The contact form now keeps a local submission counter (persisted in `localStorage`) so you can confirm the CTA is being used even without a backend.
+- To deliver submissions into the existing Google Spreadsheet, expose a small HTTPS webhook and set:
+  - `VITE_CONTACT_WEBHOOK_URL` — URL of your webhook.
+  - `VITE_CONTACT_SHEET_TARGET` (optional) — tab name to append to, defaults to `contact_requests`.
+- You can reuse the existing service-account secrets (`GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SPREADSHEET_ID`). A minimal serverless handler that appends rows is provided in `scripts/contact-webhook-example.ts` (works on Cloud Run / Cloud Functions / Vercel / Netlify).
+  - Endpoint contract: POST JSON `{ name, email, company, service, message, locale, page, userAgent, target, timestamp, source }`.
+  - Respond with 2xx on success; any non-2xx status will show a warning toast and the submission will remain counted locally.

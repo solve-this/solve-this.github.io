@@ -12,16 +12,33 @@ import { useToast } from 'primevue/usetoast'
 import { localeNativeNames } from './i18n/index'
 import { LOCALE_CODES } from './router'
 
+const BASE_PATH = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
+
 const toast = useToast()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 // ── Head metadata (title, description, lang) — SSR-aware via @unhead/vue ─────
 // vite-ssg injects @unhead/vue automatically; useHead() works both in SSR and
 // on the client so the pre-rendered HTML gets correct per-locale meta tags.
+function localeHref(loc: string): string {
+  return loc === 'en' ? `${BASE_PATH}/` : `${BASE_PATH}/${loc}/`
+}
+
+const alternateLinks = computed(() => LOCALE_CODES.map(loc => ({
+  rel: 'alternate',
+  hreflang: loc,
+  href: localeHref(loc),
+})))
 useHead(computed(() => ({
   title: t('meta.title'),
-  meta: [{ name: 'description', content: t('meta.description') }],
-  htmlAttrs: { lang: locale.value },
+  meta: [
+    { name: 'description', content: t('meta.description') },
+    // Hint browsers and Google Translate to avoid auto-translation of already localized HTML
+    { name: 'google', content: 'notranslate' },
+    { 'http-equiv': 'Content-Language', content: locale.value },
+  ],
+  link: alternateLinks.value,
+  htmlAttrs: { lang: locale.value, translate: 'no', class: 'notranslate' },
 })))
 
 // ── Theme (dark / light) ──────────────────────────────────────────────────────
@@ -99,6 +116,7 @@ onMounted(() => {
     if (saved) isDark.value = saved === 'dark'
   } catch { /* localStorage unavailable — use default theme */ }
   applyTheme(isDark.value)
+  loadSubmissionCount()
 
   nextTick(setupObserver)
 
@@ -140,9 +158,7 @@ const localeOptions = computed(() =>
  * so we never produce double-slash paths (e.g. `/app//de/`).
  */
 function switchLocale(newLocale: string): void {
-  const base = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
-  const path = newLocale === 'en' ? `${base}/` : `${base}/${newLocale}/`
-  window.location.href = path
+  window.location.href = localeHref(newLocale)
 }
 
 // ── Hero word cycle ───────────────────────────────────────────────────────────
@@ -302,11 +318,27 @@ interface FormData {
   service: string | null
   message: string
 }
+interface ContactPayload extends FormData {
+  locale: string
+  target: string
+  timestamp: string
+  page: string
+  userAgent: string
+  source: string
+}
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 const formData = ref<FormData>({ name: '', email: '', company: '', service: null, message: '' })
 const formSubmitting = ref(false)
 const formSubmitted = ref(false)
+const submissionCount = ref(0)
+const lastSubmitResult = ref<'idle' | 'sent' | 'skipped' | 'failed'>('idle')
+const lastSubmitError = ref<string | null>(null)
+const CONTACT_WEBHOOK_URL = import.meta.env.VITE_CONTACT_WEBHOOK_URL as string | undefined
+const CONTACT_SHEET_TARGET = (import.meta.env.VITE_CONTACT_SHEET_TARGET as string | undefined) || 'contact_requests'
+const CONTACT_SOURCE = (import.meta.env.VITE_CONTACT_SOURCE as string | undefined) || 'solve-this-landing'
+const contactWebhookConfigured = computed(() => Boolean(CONTACT_WEBHOOK_URL))
+const SUBMISSION_STATUS_DELAY_MS = 400
 const serviceOptions = computed(() => [
   { label: t('contact.service_llm'), value: 'llm-finetuning' },
   { label: t('contact.service_agentic'), value: 'agentic-workflows' },
@@ -319,13 +351,96 @@ const formValid = computed(() => {
   const { name, email, message } = formData.value
   return name.trim() && email.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && message.trim()
 })
+function loadSubmissionCount(): void {
+  if (typeof window === 'undefined') return
+  try {
+    const stored = localStorage.getItem('contactSubmissionCount')
+    if (stored !== null) {
+      // parse stored count (including "0"); default to 0 on invalid values
+      const parsed = Number.parseInt(stored, 10)
+      submissionCount.value = Number.isFinite(parsed) ? parsed : 0
+    }
+  } catch { /* ignore localStorage errors */ }
+}
+function incrementSubmissionCount(): void {
+  submissionCount.value += 1
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem('contactSubmissionCount', String(submissionCount.value))
+  } catch { /* ignore localStorage errors */ }
+}
+async function sendToWebhook(payload: ContactPayload): Promise<'sent' | 'skipped' | 'failed'> {
+  if (!CONTACT_WEBHOOK_URL) return 'skipped'
+  try {
+    const res = await fetch(CONTACT_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) {
+      const errText = await res.text()
+      throw new Error(errText || res.statusText)
+    }
+    return 'sent'
+  } catch (err) {
+    if (err instanceof TypeError) {
+      lastSubmitError.value = err.message || 'Network error occurred'
+    } else if (err instanceof Error) {
+      lastSubmitError.value = err.message || 'Request failed'
+    } else {
+      lastSubmitError.value = 'Request failed'
+    }
+    return 'failed'
+  }
+}
+const sheetStatusText = computed(() => {
+  if (lastSubmitResult.value === 'sent') return t('contact.sheet_status_sent', { tab: CONTACT_SHEET_TARGET })
+  if (lastSubmitResult.value === 'failed') return t('contact.sheet_status_failed')
+  if (!contactWebhookConfigured.value) return t('contact.sheet_status_offline')
+  return t('contact.sheet_status_pending')
+})
+const sheetStatusTone = computed(() => {
+  if (lastSubmitResult.value === 'sent') return 'success'
+  if (lastSubmitResult.value === 'failed') return 'error'
+  if (!contactWebhookConfigured.value) return 'muted'
+  return 'info'
+})
 async function submitForm() {
   if (!formValid.value) return
   formSubmitting.value = true
-  await new Promise(r => setTimeout(r, 1500))
+  lastSubmitError.value = null
+
+  const payload = {
+    ...formData.value,
+    locale: locale.value,
+    target: CONTACT_SHEET_TARGET,
+    timestamp: new Date().toISOString(),
+    page: typeof window !== 'undefined' ? window.location.href : '',
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+    source: CONTACT_SOURCE,
+  } satisfies ContactPayload
+
+  incrementSubmissionCount()
+  const webhookStatus = await sendToWebhook(payload)
+  await new Promise(r => setTimeout(r, SUBMISSION_STATUS_DELAY_MS))
+
   formSubmitting.value = false
   formSubmitted.value = true
-  toast.add({ severity: 'success', summary: t('toast.summary'), detail: t('toast.detail'), life: 5000 })
+  lastSubmitResult.value = webhookStatus
+
+  const toastKey =
+    webhookStatus === 'sent'
+      ? 'contact.toast_sheet_success'
+      : webhookStatus === 'failed'
+        ? 'contact.toast_sheet_failed'
+        : 'contact.toast_sheet_skipped'
+
+  toast.add({
+    severity: webhookStatus === 'failed' ? 'warn' : 'success',
+    summary: t('toast.summary'),
+    detail: t(toastKey),
+    life: 5000,
+  })
 }
 </script>
 
@@ -343,6 +458,7 @@ async function submitForm() {
   <div
     class="min-h-screen overflow-x-hidden"
     :data-theme="isDark ? 'dark' : 'light'"
+    translate="no"
     :style="{ background: 'var(--clr-bg)', color: 'var(--clr-text-1)', transition: 'background 0.35s ease, color 0.35s ease' }"
   >
     <Toast position="top-right" />
@@ -786,6 +902,22 @@ async function submitForm() {
                 </div>
                 <h3 class="text-xl font-bold mb-2" style="color:#fef3c7">{{ t('contact.success_title') }}</h3>
                 <p class="text-sm" style="color:#a78060">{{ t('contact.success_desc') }}</p>
+                <div class="mt-6 p-4 rounded-xl flex items-start gap-3" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.18)">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" :style="sheetStatusTone === 'success' ? 'background:rgba(34,197,94,0.12)' : sheetStatusTone === 'error' ? 'background:rgba(239,68,68,0.12)' : 'background:rgba(245,158,11,0.1)'">
+                    <i
+                      class="text-lg"
+                      :class="sheetStatusTone === 'success' ? 'pi pi-cloud-check' : sheetStatusTone === 'error' ? 'pi pi-exclamation-triangle' : 'pi pi-database'"
+                      :style="sheetStatusTone === 'success' ? 'color:#22c55e' : sheetStatusTone === 'error' ? 'color:#ef4444' : 'color:#f59e0b'"
+                    />
+                  </div>
+                  <div class="text-left">
+                    <p class="font-semibold text-sm" style="color:#fef3c7">{{ sheetStatusText }}</p>
+                    <p class="text-xs mt-1" style="color:#a78060">
+                      {{ t('contact.submission_counter', { count: submissionCount }) }}
+                    </p>
+                    <p v-if="lastSubmitError" class="text-xs mt-1" style="color:#fca5a5">{{ lastSubmitError }}</p>
+                  </div>
+                </div>
               </div>
 
               <form
@@ -828,6 +960,16 @@ async function submitForm() {
                   class="w-full btn-amber interactive"
                   style="padding:0.875rem 1rem;font-weight:700;font-size:1rem;color:#0c0a09;border:none;border-radius:0.75rem"
                 />
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs" style="color:#4a3828">
+                  <span class="flex items-center gap-2">
+                    <i class="pi pi-chart-bar" />
+                    {{ t('contact.submission_counter', { count: submissionCount }) }}
+                  </span>
+                  <span class="flex items-center gap-2" :style="contactWebhookConfigured ? 'color:#d97706' : 'color:#6b5040'">
+                    <i :class="contactWebhookConfigured ? 'pi pi-cloud-upload' : 'pi pi-ban'" />
+                    {{ contactWebhookConfigured ? t('contact.sheet_status_ready', { tab: CONTACT_SHEET_TARGET }) : t('contact.sheet_status_offline') }}
+                  </span>
+                </div>
                 <p class="text-xs text-center" style="color:#4a3828">{{ t('contact.form_privacy') }}</p>
               </form>
             </Transition>

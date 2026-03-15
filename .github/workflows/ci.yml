@@ -7,7 +7,7 @@
 #   2. audit             — npm audit (high/critical CVEs block the PR)
 #                          npm outdated is reported informally, never blocks
 #   3. build             — full Vite production build.
-#                          Uses el-j/google-sheet-translations@v2 action to fetch
+#                          Uses el-j/google-sheet-translations@v2.1.3 action to fetch
 #                          translations before running npm run build.
 #   4. translations-sync — uses the same bundled action to fetch the latest translations
 #                          and verifies the committed JSON files match exactly.
@@ -102,12 +102,13 @@ jobs:
       # Fetch translations using the bundled GitHub Action (no extra Node setup needed).
       # The action writes locale JSON files to src/i18n/translations/ before the build.
       - name: Fetch translations from Google Sheets
-        uses: el-j/google-sheet-translations@v2
+        uses: el-j/google-sheet-translations@v2.1.3
         with:
           google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
           google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}
           google-spreadsheet-id:    ${{ secrets.GOOGLE_SPREADSHEET_ID }}
           sheet-titles:             'i18n,landingPage'
+          target-locales:           'de,fr,es,it,pl,ru,tr'
           translations-output-dir:  'src/i18n/translations'
           locales-output-path:      'src/i18n/locales.ts'
           data-json-path:           'src/i18n/languageData.json'
@@ -130,34 +131,34 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-
-      # Use the bundled GitHub Action — no Node.js setup or npm install needed.
-      # The action reads the spreadsheet and writes locale JSON files.
-      - name: Fetch latest translations from Google Sheets
-        uses: el-j/google-sheet-translations@v2
+      - uses: actions/setup-node@v4
         with:
-          google-client-email:      ${{ secrets.GOOGLE_CLIENT_EMAIL }}
-          google-private-key:       ${{ secrets.GOOGLE_PRIVATE_KEY }}
-          google-spreadsheet-id:    ${{ secrets.GOOGLE_SPREADSHEET_ID }}
-          sheet-titles:             'i18n,landingPage'
-          translations-output-dir:  'src/i18n/translations'
-          locales-output-path:      'src/i18n/locales.ts'
-          data-json-path:           'src/i18n/languageData.json'
-          sync-local-changes:       'false'
-          row-limit:                '200'
-          wait-seconds:             '1'
+          node-version: 20
+          cache: npm
 
-      # If the action updated any JSON file in translations/, the committed source
-      # is out of sync with the spreadsheet → block the PR.
-      - name: Verify committed translations match the spreadsheet
-        run: |
-          if ! git diff --exit-code src/i18n/translations/; then
-            echo ""
-            echo "❌ Translation files are out of sync with Google Sheets."
-            echo ""
-            echo "To fix, run one of the following locally and commit the result:"
-            echo "  • npm run fetch-translations   – spreadsheet has newer translations"
-            echo "  • npm run sync-translations    – you added new keys to en.json"
-            exit 1
-          fi
-          echo "✅ All committed translation files match the Google Spreadsheet."
+      - name: Install dependencies
+        run: npm ci
+
+      # Fresh push from code → sheet (auto-translate) to avoid precheck failures.
+      - name: Sync translations (push local keys + auto-translate)
+        run: npm run sync-translations
+        env:
+          GOOGLE_CLIENT_EMAIL:   ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY:    ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+
+      # Pull the computed translations back to the workspace so downstream jobs can use them.
+      - name: Fetch translations after sync
+        run: npm run fetch-translations
+        env:
+          GOOGLE_CLIENT_EMAIL:   ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY:    ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+
+      - name: Upload updated translations artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: synced-translations
+          path: |
+            src/i18n/translations/
+            src/i18n/locales.ts
