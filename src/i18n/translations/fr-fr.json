@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "nous résolvons ce qui est nécessaire",
@@ -84,15 +74,6 @@
     "contact.form_privacy": "En soumettant ce formulaire, vous acceptez notre politique de confidentialité. Zéro spam, jamais.",
     "contact.success_title": "Message envoyé !",
     "contact.success_desc": "Nous allons examiner votre projet et vous recontacterons dans les 24 heures.",
-    "contact.toast_sheet_success": "Enregistré avec succès dans la feuille Google.",
-    "contact.toast_sheet_failed": "Votre demande a été enregistrée localement mais la feuille est inaccessible.",
-    "contact.toast_sheet_skipped": "Demande capturée. Configurez la synchronisation vers la feuille pour l'envoi automatique.",
-    "contact.submission_counter": "Demandes suivies : {count}",
-    "contact.sheet_status_ready": "Synchronisation de feuille activée ({tab})",
-    "contact.sheet_status_offline": "Synchronisation de feuille non configurée",
-    "contact.sheet_status_pending": "En attente de synchronisation de feuille",
-    "contact.sheet_status_sent": "Enregistré dans l'onglet \"{tab}\"",
-    "contact.sheet_status_failed": "Impossible d'atteindre la feuille. Enregistré localement.",
     "contact.service_llm": "Réglage fin du LLM",
     "contact.service_agentic": "Flux de travail d'agents",
     "contact.service_rag": "Architecture RAG",
@@ -101,7 +82,7 @@
     "contact.service_other": "Autre / Pas encore sûr",
     "footer.tagline": "Ingénierie d'IA d'élite",
     "footer.copyright": "© 2025 solve.this. Tous droits réservés.",
-    "meta.title": "Résolvez ceci — Ingénierie IA d'élite",
+    "meta.title": "résoudre.ceci — Ingénierie IA d'élite",
     "meta.description": "solve.this — Collectif d'ingénierie IA d'élite. Nous concevons des systèmes LLM de qualité professionnelle pour l'optimisation, les flux de travail d'agents et les systèmes RAG.",
     "nav.services": "Services",
     "nav.expertise": "Compétence",
@@ -110,6 +91,25 @@
     "theme.toggle_dark": "Passer en mode sombre",
     "theme.toggle_light": "Passer en mode clair",
     "toast.summary": "Message reçu",
-    "toast.detail": "Nous vous contacterons dans les 24 heures."
+    "toast.detail": "Nous vous contacterons dans les 24 heures.",
+    "contact.toast_sheet_success": "#ERROR!",
+    "contact.toast_sheet_failed": "#ERROR!",
+    "contact.toast_sheet_skipped": "#ERROR!",
+    "contact.submission_counter": "#ERROR!",
+    "contact.sheet_status_ready": "#ERROR!",
+    "contact.sheet_status_offline": "#ERROR!",
+    "contact.sheet_status_pending": "#ERROR!",
+    "contact.sheet_status_sent": "#ERROR!",
+    "contact.sheet_status_failed": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

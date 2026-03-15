@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Wir lösen das, was nötig ist",
@@ -54,7 +44,7 @@
     "expertise.why_production": "Produktionsorientiertes Denken – keine Spielzeugdemos",
     "expertise.why_onprem": "Optionen für die lokale Bereitstellung und Datensouveränität",
     "expertise.why_delivery": "Übliche Lieferzeit: 4–8 Wochen ab Anpfiff",
-    "expertise.why_senior": "Nur erfahrene Ingenieure – keine Berufsanfänger in Ihrem Projekt",
+    "expertise.why_senior": "Nur erfahrene Ingenieure – keine Nachwuchsingenieure in Ihrem Projekt",
     "expertise.skill_transformer": "Transformatorarchitektur",
     "expertise.skill_prompt": "Prompt Engineering",
     "expertise.skill_vector": "Vektordatenbanken",
@@ -84,15 +74,6 @@
     "contact.form_privacy": "Mit dem Absenden Ihrer Unterlagen stimmen Sie unserer Datenschutzerklärung zu. Garantiert kein Spam.",
     "contact.success_title": "Nachricht gesendet!",
     "contact.success_desc": "Wir werden Ihr Projekt prüfen und uns innerhalb von 24 Stunden bei Ihnen melden.",
-    "contact.toast_sheet_success": "In die Google-Tabelle protokolliert.",
-    "contact.toast_sheet_failed": "Wir haben Ihre Anfrage lokal gespeichert, konnten aber das Spreadsheet nicht erreichen.",
-    "contact.toast_sheet_skipped": "Anfrage erfasst. Sheet-Sync konfigurieren, um automatisch zu senden.",
-    "contact.submission_counter": "Erfasste Anfragen: {count}",
-    "contact.sheet_status_ready": "Sheet-Sync aktiviert ({tab})",
-    "contact.sheet_status_offline": "Sheet-Sync nicht konfiguriert",
-    "contact.sheet_status_pending": "Wartet auf Sheet-Sync",
-    "contact.sheet_status_sent": "In Tabellenblatt \"{tab}\" gespeichert",
-    "contact.sheet_status_failed": "Konnte Tabelle nicht erreichen. Lokal gespeichert.",
     "contact.service_llm": "LLM Feinabstimmung",
     "contact.service_agentic": "Agentische Arbeitsabläufe",
     "contact.service_rag": "RAG-Architektur",
@@ -110,6 +91,25 @@
     "theme.toggle_dark": "In den Dunkelmodus wechseln",
     "theme.toggle_light": "In den Lichtmodus wechseln",
     "toast.summary": "Nachricht empfangen",
-    "toast.detail": "Wir melden uns innerhalb von 24 Stunden bei Ihnen."
+    "toast.detail": "Wir melden uns innerhalb von 24 Stunden bei Ihnen.",
+    "contact.toast_sheet_success": "#ERROR!",
+    "contact.toast_sheet_failed": "#ERROR!",
+    "contact.toast_sheet_skipped": "#ERROR!",
+    "contact.submission_counter": "#ERROR!",
+    "contact.sheet_status_ready": "#ERROR!",
+    "contact.sheet_status_offline": "#ERROR!",
+    "contact.sheet_status_pending": "#ERROR!",
+    "contact.sheet_status_sent": "#ERROR!",
+    "contact.sheet_status_failed": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

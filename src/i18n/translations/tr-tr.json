@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "İhtiyaç duyulanı çözüyoruz.",
@@ -84,15 +74,6 @@
     "contact.form_privacy": "Göndererek gizlilik politikamızı kabul etmiş olursunuz. Asla spam göndermeyiz.",
     "contact.success_title": "Mesaj gönderildi!",
     "contact.success_desc": "Projenizi inceleyeceğiz ve 24 saat içinde size geri döneceğiz.",
-    "contact.toast_sheet_success": "Google Sheet'e başarıyla kaydedildi.",
-    "contact.toast_sheet_failed": "Talebinizi yerel olarak kaydettik ancak tabloya ulaşılamadı.",
-    "contact.toast_sheet_skipped": "Talep yakalandı. Otomatik gönderim için tablo senkronizasyonunu yapılandırın.",
-    "contact.submission_counter": "Kaydedilen talepler: {count}",
-    "contact.sheet_status_ready": "Sheet senkronizasyonu etkin ({tab})",
-    "contact.sheet_status_offline": "Sheet senkronizasyonu yapılandırılmadı",
-    "contact.sheet_status_pending": "Sheet senkronizasyonu bekleniyor",
-    "contact.sheet_status_sent": "\"{tab}\" sekmesine kaydedildi",
-    "contact.sheet_status_failed": "Tabloya ulaşılamadı. Yerel olarak kaydedildi.",
     "contact.service_llm": "LLM İnce Ayarı",
     "contact.service_agentic": "Aracılı İş Akışları",
     "contact.service_rag": "RAG Mimarisi",
@@ -110,6 +91,25 @@
     "theme.toggle_dark": "Karanlık moda geç",
     "theme.toggle_light": "Açık moda geç",
     "toast.summary": "Mesaj Alındı",
-    "toast.detail": "24 saat içinde sizinle iletişime geçeceğiz."
+    "toast.detail": "24 saat içinde sizinle iletişime geçeceğiz.",
+    "contact.toast_sheet_success": "#ERROR!",
+    "contact.toast_sheet_failed": "#ERROR!",
+    "contact.toast_sheet_skipped": "#ERROR!",
+    "contact.submission_counter": "#ERROR!",
+    "contact.sheet_status_ready": "#ERROR!",
+    "contact.sheet_status_offline": "#ERROR!",
+    "contact.sheet_status_pending": "#ERROR!",
+    "contact.sheet_status_sent": "#ERROR!",
+    "contact.sheet_status_failed": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

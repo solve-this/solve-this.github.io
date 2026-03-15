@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "we solve what is needed",
@@ -84,15 +74,6 @@
     "contact.form_privacy": "By submitting you agree to our privacy policy. No spam, ever.",
     "contact.success_title": "Message Sent!",
     "contact.success_desc": "We'll review your project and get back to you within 24 hours.",
-    "contact.toast_sheet_success": "Logged to the Google Sheet successfully.",
-    "contact.toast_sheet_failed": "We saved your request locally but could not reach the spreadsheet.",
-    "contact.toast_sheet_skipped": "Submission captured. Configure sheet sync to forward automatically.",
-    "contact.submission_counter": "Submissions tracked: {count}",
-    "contact.sheet_status_ready": "Sheet sync enabled ({tab})",
-    "contact.sheet_status_offline": "Sheet sync not configured",
-    "contact.sheet_status_pending": "Awaiting sheet sync",
-    "contact.sheet_status_sent": "Saved to spreadsheet tab \"{tab}\"",
-    "contact.sheet_status_failed": "Could not reach spreadsheet. Saved locally.",
     "contact.service_llm": "LLM Fine-tuning",
     "contact.service_agentic": "Agentic Workflows",
     "contact.service_rag": "RAG Architecture",
@@ -110,6 +91,25 @@
     "theme.toggle_dark": "Switch to dark mode",
     "theme.toggle_light": "Switch to light mode",
     "toast.summary": "Message Received",
-    "toast.detail": "We'll be in touch within 24 hours."
+    "toast.detail": "We'll be in touch within 24 hours.",
+    "contact.toast_sheet_success": "Logged to the Google Sheet successfully.",
+    "contact.toast_sheet_failed": "We saved your request locally but could not reach the spreadsheet.",
+    "contact.toast_sheet_skipped": "Submission captured. Configure sheet sync to forward automatically.",
+    "contact.submission_counter": "Submissions tracked: {count}",
+    "contact.sheet_status_ready": "Sheet sync enabled ({tab})",
+    "contact.sheet_status_offline": "Sheet sync not configured",
+    "contact.sheet_status_pending": "Awaiting sheet sync",
+    "contact.sheet_status_sent": "Saved to spreadsheet tab \"{tab}\"",
+    "contact.sheet_status_failed": "Could not reach spreadsheet. Saved locally."
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }
