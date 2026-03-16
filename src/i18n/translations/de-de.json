@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Wir lösen das, was nötig ist",
@@ -16,7 +26,7 @@
     "hero.cta_secondary": "Services entdecken",
     "hero.scroll": "Scrollen",
     "hero.stat_production_ai": "Produktionssysteme für KI",
-    "hero.stat_tokens_daily": "Tägliche Token-Verarbeitung",
+    "hero.stat_tokens_daily": "Täglich werden Token verarbeitet",
     "hero.stat_uptime": "Verfügbarkeits-SLA",
     "hero.stat_latency": "Durchschnittliche Inferenzlatenz",
     "services.badge": "Was wir bauen",
@@ -44,7 +54,7 @@
     "expertise.why_production": "Produktionsorientiertes Denken – keine Spielzeugdemos",
     "expertise.why_onprem": "Optionen für die lokale Bereitstellung und Datensouveränität",
     "expertise.why_delivery": "Übliche Lieferzeit: 4–8 Wochen ab Anpfiff",
-    "expertise.why_senior": "Nur erfahrene Ingenieure – keine Nachwuchsingenieure in Ihrem Projekt",
+    "expertise.why_senior": "Nur erfahrene Ingenieure – keine Berufsanfänger in Ihrem Projekt",
     "expertise.skill_transformer": "Transformatorarchitektur",
     "expertise.skill_prompt": "Prompt Engineering",
     "expertise.skill_vector": "Vektordatenbanken",
@@ -101,15 +111,5 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }

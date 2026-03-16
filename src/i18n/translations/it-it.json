@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che è necessario",
@@ -63,7 +73,7 @@
     "contact.form_name": "Nome *",
     "contact.form_email": "E-mail *",
     "contact.form_company": "Azienda",
-    "contact.form_service": "Necessario servizio",
+    "contact.form_service": "Assistenza necessaria",
     "contact.form_message": "Descrizione del progetto *",
     "contact.form_name_placeholder": "Ada Lovelace",
     "contact.form_email_placeholder": "ada@company.ai",
@@ -101,15 +111,5 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }
