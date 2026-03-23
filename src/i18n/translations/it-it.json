@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che è necessario",
@@ -89,7 +79,7 @@
     "contact.service_rag": "Architettura RAG",
     "contact.service_strategy": "Strategia e audit sull'IA",
     "contact.service_safety": "Sicurezza e allineamento dell'IA",
-    "contact.service_other": "Altro / Non sono ancora sicuro",
+    "contact.service_other": "Altro / Non ancora sicuro",
     "footer.tagline": "Ingegneria dell'IA d'élite",
     "footer.copyright": "© 2025 solve.this. Tutti i diritti riservati.",
     "meta.title": "solve.this — Ingegneria dell'IA d'élite",
@@ -111,5 +101,15 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

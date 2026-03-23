@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "rozwiązujemy to co jest potrzebne",
@@ -64,7 +54,7 @@
     "contact.badge": "Budujmy razem",
     "contact.heading": "Gotowe do wysyłki",
     "contact.heading_highlight": "Prawdziwa sztuczna inteligencja",
-    "contact.description": "Opowiedz nam o swoim problemie. Odpowiemy w ciągu 24 godzin, przedstawiając ocenę techniczną – bez ogólnikowej oferty sprzedaży, tylko bezpośrednia analiza techniczna.",
+    "contact.description": "Opowiedz nam o swoim problemie. Odpowiemy w ciągu 24 godzin, przedstawiając ocenę techniczną – bez ogólnikowej oferty handlowej, tylko bezpośrednia analiza techniczna.",
     "contact.signal_consultation": "Bezpłatna wstępna konsultacja techniczna",
     "contact.signal_nda": "NDA podpisano przed jakąkolwiek dyskusją",
     "contact.signal_contract": "Kontrakty milowe o stałej cenie",
@@ -111,5 +101,15 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }
