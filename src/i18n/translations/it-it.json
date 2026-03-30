@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che è necessario",
@@ -9,7 +19,7 @@
     "hero.phase_architecture": "Architettura",
     "hero.phase_intelligence": "Intelligenza",
     "hero.phase_solution": "Soluzione",
-    "hero.tagline": "Non ci limitiamo a suggerire, ma progettiamo. {brand} colma il divario tra l'entusiasmo per l'IA e {highlight}.",
+    "hero.tagline": "Non ci limitiamo a suggerire, progettiamo. {brand} colma il divario tra l'entusiasmo per l'IA e {highlight}.",
     "hero.tagline_brand": "risolvere.questo",
     "hero.tagline_highlight": "intelligence di livello produttivo",
     "hero.cta_primary": "Avvia un progetto",
@@ -79,11 +89,11 @@
     "contact.service_rag": "Architettura RAG",
     "contact.service_strategy": "Strategia e audit sull'IA",
     "contact.service_safety": "Sicurezza e allineamento dell'IA",
-    "contact.service_other": "Altro / Non ancora sicuro",
+    "contact.service_other": "Altro / Non sono ancora sicuro",
     "footer.tagline": "Ingegneria dell'IA d'élite",
     "footer.copyright": "© 2025 solve.this. Tutti i diritti riservati.",
     "meta.title": "solve.this — Ingegneria dell'IA d'élite",
-    "meta.description": "solve.this — Collettivo d'élite di ingegneri AI. Progettiamo sistemi di fine-tuning LLM di livello produttivo, flussi di lavoro agentici e sistemi RAG.",
+    "meta.description": "solve.this — Collettivo di ingegneria AI d'élite. Progettiamo sistemi di fine-tuning LLM di livello produttivo, flussi di lavoro agentici e sistemi RAG.",
     "nav.services": "Fibre",
     "nav.expertise": "Competenza",
     "nav.contact": "Contatto",
@@ -101,15 +111,5 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }

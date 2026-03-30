@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "мы решаем то, что необходимо",
@@ -37,7 +47,7 @@
     "expertise.heading": "Построено",
     "expertise.heading_highlight": "Эксперты",
     "expertise.heading_suffix": "Неоперативные инженеры",
-    "expertise.description": "Глубокие знания в области научных исследований, производственный опыт и одержимость стремлением сделать все идеально.",
+    "expertise.description": "Глубокие знания в области научных исследований, производственный опыт и одержимость стремлением к совершенству.",
     "expertise.core_competencies": "Основные компетенции",
     "expertise.our_tech_stack": "Наш технологический стек",
     "expertise.why_title": "Зачем это решать?",
@@ -101,15 +111,5 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }

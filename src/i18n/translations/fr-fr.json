@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "nous résolvons ce qui est nécessaire",
@@ -82,7 +92,7 @@
     "contact.service_other": "Autre / Pas encore sûr",
     "footer.tagline": "Ingénierie d'IA d'élite",
     "footer.copyright": "© 2025 solve.this. Tous droits réservés.",
-    "meta.title": "résoudre.ceci — Ingénierie IA d'élite",
+    "meta.title": "Résolvez ceci — Ingénierie IA d'élite",
     "meta.description": "solve.this — Collectif d'ingénierie IA d'élite. Nous concevons des systèmes LLM de qualité professionnelle pour l'optimisation, les flux de travail d'agents et les systèmes RAG.",
     "nav.services": "Services",
     "nav.expertise": "Compétence",
@@ -101,15 +111,5 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }

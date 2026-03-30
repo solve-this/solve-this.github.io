@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Wir lösen das, was nötig ist",
@@ -16,13 +26,13 @@
     "hero.cta_secondary": "Services entdecken",
     "hero.scroll": "Scrollen",
     "hero.stat_production_ai": "Produktionssysteme für KI",
-    "hero.stat_tokens_daily": "Tägliche Token-Verarbeitung",
+    "hero.stat_tokens_daily": "Täglich werden Token verarbeitet",
     "hero.stat_uptime": "Verfügbarkeits-SLA",
     "hero.stat_latency": "Durchschnittliche Inferenzlatenz",
     "services.badge": "Was wir bauen",
     "services.heading": "KI-Dienste",
     "services.heading_highlight": "Produktionsbereit",
-    "services.description": "KI-Engineering von der Architektur bis zur Implementierung – von A bis Z.",
+    "services.description": "KI-Engineering von A bis Z – von der Architektur bis zur Implementierung.",
     "services.llm_title": "LLM Feinabstimmung",
     "services.llm_description": "Domänenspezifische Modellanpassung mit LoRA-, QLoRA- und RLHF-Pipelines. Wir wandeln Allzweckmodelle in Präzisionsinstrumente für Ihre Branche um.",
     "services.agentic_title": "Agentische Arbeitsabläufe",
@@ -37,7 +47,7 @@
     "expertise.heading": "Erstellt von",
     "expertise.heading_highlight": "Experten",
     "expertise.heading_suffix": "Nicht pünktliche Ingenieure",
-    "expertise.description": "Tiefgreifende Forschungserfahrung, Produktionsfehler und die Besessenheit, alles richtig zu machen.",
+    "expertise.description": "Fundierte Forschungserfahrung, Produktionserfahrung und der unbedingte Wille, alles richtig zu machen.",
     "expertise.core_competencies": "Kernkompetenzen",
     "expertise.our_tech_stack": "Unser Technologie-Stack",
     "expertise.why_title": "Warum sollte man das lösen?",
@@ -101,15 +111,5 @@
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
     "contact.sheet_status_failed": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }
