@@ -73,7 +73,7 @@
     "contact.form_name": "Nome *",
     "contact.form_email": "E-mail *",
     "contact.form_company": "Azienda",
-    "contact.form_service": "Necessario servizio",
+    "contact.form_service": "Assistenza necessaria",
     "contact.form_message": "Descrizione del progetto *",
     "contact.form_name_placeholder": "Ada Lovelace",
     "contact.form_email_placeholder": "ada@company.ai",

@@ -32,7 +32,7 @@
     "services.badge": "Was wir bauen",
     "services.heading": "KI-Dienste",
     "services.heading_highlight": "Produktionsbereit",
-    "services.description": "KI-Engineering von A bis Z – von der Architektur bis zur Implementierung.",
+    "services.description": "KI-Engineering von der Architektur bis zur Implementierung – von A bis Z.",
     "services.llm_title": "LLM Feinabstimmung",
     "services.llm_description": "Domänenspezifische Modellanpassung mit LoRA-, QLoRA- und RLHF-Pipelines. Wir wandeln Allzweckmodelle in Präzisionsinstrumente für Ihre Branche um.",
     "services.agentic_title": "Agentische Arbeitsabläufe",
