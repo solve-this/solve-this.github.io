@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che è necessario",
@@ -110,6 +100,25 @@
     "contact.sheet_status_offline": "#ERROR!",
     "contact.sheet_status_pending": "#ERROR!",
     "contact.sheet_status_sent": "#ERROR!",
-    "contact.sheet_status_failed": "#ERROR!"
+    "contact.sheet_status_failed": "#ERROR!",
+    "nav.projects": "#ERROR!",
+    "projects.badge": "#ERROR!",
+    "projects.heading": "#ERROR!",
+    "projects.heading_highlight": "#ERROR!",
+    "projects.description": "#ERROR!",
+    "projects.updated": "#ERROR!",
+    "projects.cta_github": "#ERROR!",
+    "projects.cta_live": "#ERROR!",
+    "projects.empty": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }
