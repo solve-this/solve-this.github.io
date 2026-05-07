@@ -55,7 +55,7 @@
     "projects.badge": "Portfolio",
     "projects.heading": "Explore Our",
     "projects.heading_highlight": "Public Projects",
-    "projects.description": "A live view of our public GitHub work. This section is refreshed during static builds and on weekly scheduled deploys.",
+    "projects.description": "A snapshot of our public GitHub work, automatically refreshed during static builds and on weekly scheduled deploys.",
     "projects.updated": "Updated {date}",
     "projects.cta_github": "GitHub",
     "projects.cta_live": "Live",
