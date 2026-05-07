@@ -18,6 +18,7 @@ Premium dark-themed agency landing page for **solve.this**, a collective of elit
 4. **Expertise scroll** — skill-bar progress indicators, tech-stack chips, value props, infinite marquee
 5. **Lead form** — PrimeVue form components with email validation, async submit, success state, Toast notification
 6. **Footer** — compact nav and copyright
+7. **Projects portfolio** — auto-generated cards for public repositories with live GitHub preview image and direct repository links
 
 ## Development
 
@@ -32,6 +33,12 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+### Project portfolio data refresh
+
+- `npm run fetch-projects` pulls all public repositories from the `solve-this` GitHub owner and writes `src/data/projects.json`.
+- `npm run build` automatically refreshes this file in `prebuild`.
+- The deploy workflow runs weekly (Monday 06:00 UTC), so the static site rebuilds with fresh project data even without code changes.
 
 ## Deployment (GitHub Pages)
 

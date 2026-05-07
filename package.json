@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit",
     "fetch-translations": "tsx scripts/fetch-translations.ts",
+    "fetch-projects": "tsx scripts/fetch-projects.ts",
     "sync-translations": "tsx scripts/sync-translations.ts",
-    "prebuild": "npm run fetch-translations"
+    "prebuild": "npm run fetch-translations && npm run fetch-projects"
   },
   "dependencies": {
     "@primevue/themes": "^4.5.4",
