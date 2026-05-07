@@ -58,6 +58,9 @@ jobs:
         env:
           VITE_BASE_PATH: /
           SKIP_PREBUILD_FETCH: '1'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PROJECTS_OWNER: solve-this
+          GITHUB_CURRENT_REPO: solve-this.github.io
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

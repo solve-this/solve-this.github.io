@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "name": "humanoid-roadmap",
+    "fullName": "solve-this/humanoid-roadmap",
+    "githubUrl": "https://github.com/solve-this/humanoid-roadmap",
+    "previewUrl": "https://opengraph.githubassets.com/1/solve-this/humanoid-roadmap",
+    "description": "the roadmap of human and humanoid",
+    "homepage": null,
+    "language": "TypeScript",
+    "stars": 0,
+    "updatedAt": "2026-05-07T20:49:31Z",
+    "topics": []
+  }
+]
