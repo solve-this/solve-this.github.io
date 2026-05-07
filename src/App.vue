@@ -11,6 +11,7 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { localeNativeNames } from './i18n/index'
 import { LOCALE_CODES } from './router'
+import projectsData from './data/projects.json'
 
 const BASE_PATH = ((import.meta.env.BASE_URL as string) || '/').replace(/\/$/, '')
 
@@ -134,6 +135,7 @@ onUnmounted(() => {
 // ── Nav ───────────────────────────────────────────────────────────────────────
 const navLinks = computed(() => [
   { label: t('nav.services'), href: '#services' },
+  { label: t('nav.projects'), href: '#projects' },
   { label: t('nav.expertise'), href: '#expertise' },
   { label: t('nav.contact'), href: '#contact' },
 ])
@@ -262,6 +264,30 @@ const services = computed(() => [
     large: false,
   },
 ])
+
+interface ProjectCardData {
+  name: string
+  fullName: string
+  githubUrl: string
+  previewUrl: string
+  description: string
+  homepage: string | null
+  language: string
+  stars: number
+  updatedAt: string
+  topics: string[]
+}
+
+const projects = computed<ProjectCardData[]>(() => {
+  const list = (projectsData as ProjectCardData[]) || []
+  return list.slice(0, 12)
+})
+
+function formatProjectDate(updatedAt: string): string {
+  const date = new Date(updatedAt)
+  if (Number.isNaN(date.getTime())) return updatedAt
+  return new Intl.DateTimeFormat(locale.value, { month: 'short', day: 'numeric', year: 'numeric' }).format(date)
+}
 
 // ── 3D card tilt ──────────────────────────────────────────────────────────────
 interface CardTilt { rx: number; ry: number }
@@ -758,6 +784,92 @@ async function submitForm() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROJECTS ───────────────────────────────────────────────────────── -->
+    <section id="projects" class="py-24 sm:py-32 relative">
+      <div class="absolute inset-0 pointer-events-none" style="background:linear-gradient(to bottom, transparent, rgba(245,158,11,0.035), transparent)" />
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16 reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4" style="color:#f59e0b;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.05)">
+            <i class="pi pi-briefcase text-xs" />
+            {{ t('projects.badge') }}
+          </div>
+          <h2 class="font-black mb-4" style="font-size:clamp(1.8rem,5vw,3.2rem);color:#fef3c7">
+            {{ t('projects.heading') }} <span class="gradient-text">{{ t('projects.heading_highlight') }}</span>
+          </h2>
+          <p style="color:#a78060;max-width:42rem;margin:0 auto;font-size:1.1rem">
+            {{ t('projects.description') }}
+          </p>
+        </div>
+
+        <div v-if="projects.length" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
+          <article
+            v-for="project in projects"
+            :key="project.fullName"
+            class="glass rounded-2xl overflow-hidden reveal interactive"
+            style="border:1px solid rgba(245,158,11,0.16)"
+          >
+            <a :href="project.githubUrl" target="_blank" rel="noopener noreferrer" class="block">
+              <img
+                :src="project.previewUrl"
+                :alt="`${project.fullName} preview`"
+                loading="lazy"
+                class="w-full h-44 object-cover"
+              >
+            </a>
+            <div class="p-5 sm:p-6">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <h3 class="text-lg font-bold leading-tight" style="color:#fef3c7">{{ project.name }}</h3>
+                <span class="text-xs px-2 py-1 rounded-full flex-shrink-0" style="color:#fbbf24;background:rgba(245,158,11,0.12)">★ {{ project.stars }}</span>
+              </div>
+              <p class="text-sm leading-relaxed mb-4" style="color:#a78060">{{ project.description }}</p>
+              <div class="flex flex-wrap gap-2 mb-5">
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:rgba(124,58,237,0.12);color:#c4b5fd;border:1px solid rgba(124,58,237,0.2)">
+                  {{ project.language }}
+                </span>
+                <span
+                  v-for="topic in project.topics.slice(0, 2)"
+                  :key="topic"
+                  class="px-2.5 py-1 rounded-full text-xs font-medium"
+                  style="background:rgba(245,158,11,0.08);color:#fde68a;border:1px solid rgba(245,158,11,0.18)"
+                >
+                  {{ topic }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between gap-3 text-xs">
+                <span style="color:#6b5040">{{ t('projects.updated', { date: formatProjectDate(project.updatedAt) }) }}</span>
+                <div class="flex items-center gap-2">
+                  <a
+                    :href="project.githubUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3 py-1.5 rounded-lg font-semibold interactive"
+                    style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)"
+                  >
+                    {{ t('projects.cta_github') }}
+                  </a>
+                  <a
+                    v-if="project.homepage"
+                    :href="project.homepage"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3 py-1.5 rounded-lg font-semibold interactive"
+                    style="background:rgba(124,58,237,0.12);color:#c4b5fd;border:1px solid rgba(124,58,237,0.24)"
+                  >
+                    {{ t('projects.cta_live') }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div v-else class="reveal glass rounded-2xl p-8 text-center" style="border:1px solid rgba(245,158,11,0.18)">
+          <p class="text-sm" style="color:#a78060">{{ t('projects.empty') }}</p>
         </div>
       </div>
     </section>
