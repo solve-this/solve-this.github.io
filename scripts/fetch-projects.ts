@@ -49,7 +49,7 @@ function toProjects(repos: GitHubRepo[]): ProjectCardData[] {
       description: repo.description?.trim() || 'No description available yet.',
       homepage: repo.homepage?.trim() || null,
       language: repo.language || 'N/A',
-      stars: repo.stargazers_count ?? 0,
+      stars: repo.stargazers_count || 0,
       updatedAt: repo.updated_at,
       topics: Array.isArray(repo.topics) ? repo.topics : [],
     }))
