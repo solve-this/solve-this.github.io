@@ -21,6 +21,7 @@ interface ProjectCardData {
   name: string
   fullName: string
   githubUrl: string
+  liveUrl: string
   previewUrl: string
   description: string
   homepage: string | null
@@ -37,22 +38,48 @@ const owner = process.env.GITHUB_PROJECTS_OWNER || 'solve-this'
 const currentRepoName = process.env.GITHUB_CURRENT_REPO || 'solve-this.github.io'
 const githubToken = process.env.GITHUB_TOKEN
 
+function normalizeUrl(value: string | null | undefined): string | null {
+  if (!value) return null
+  const input = value.trim()
+  if (!input) return null
+  try {
+    const normalized = new URL(input.startsWith('http') ? input : `https://${input}`)
+    return normalized.toString()
+  } catch {
+    return null
+  }
+}
+
+function fallbackGithubPagesUrl(repoName: string): string {
+  const normalizedOwner = owner.toLowerCase()
+  const userSiteRepo = `${normalizedOwner}.github.io`
+  if (repoName.toLowerCase() === userSiteRepo) {
+    return `https://${normalizedOwner}.github.io/`
+  }
+  return `https://${normalizedOwner}.github.io/${repoName}/`
+}
+
 function toProjects(repos: GitHubRepo[]): ProjectCardData[] {
   return repos
     .filter(repo => !repo.archived && !repo.fork && repo.name !== currentRepoName)
     .sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at))
-    .map(repo => ({
-      name: repo.name,
-      fullName: repo.full_name,
-      githubUrl: repo.html_url,
-      previewUrl: `https://opengraph.githubassets.com/1/${repo.full_name}`,
-      description: repo.description?.trim() || 'No description available yet.',
-      homepage: repo.homepage?.trim() || null,
-      language: repo.language || 'N/A',
-      stars: repo.stargazers_count || 0,
-      updatedAt: repo.updated_at,
-      topics: Array.isArray(repo.topics) ? repo.topics : [],
-    }))
+    .map(repo => {
+      const homepage = normalizeUrl(repo.homepage)
+      const liveUrl = homepage || fallbackGithubPagesUrl(repo.name)
+      return {
+        name: repo.name,
+        fullName: repo.full_name,
+        githubUrl: repo.html_url,
+        liveUrl,
+        previewUrl: `https://s.wordpress.com/mshots/v1/${encodeURIComponent(liveUrl)}?w=1200`,
+        description: repo.description?.trim() || 'No description available yet.',
+        homepage,
+        language: repo.language || 'N/A',
+        stars: repo.stargazers_count || 0,
+        updatedAt: repo.updated_at,
+        topics: Array.isArray(repo.topics) ? repo.topics : [],
+      }
+    })
 }
 
 function getNextLink(linkHeader: string | null): string | null {
