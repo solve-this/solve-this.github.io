@@ -269,6 +269,7 @@ interface ProjectCardData {
   name: string
   fullName: string
   githubUrl: string
+  liveUrl: string
   previewUrl: string
   description: string
   homepage: string | null
@@ -813,7 +814,7 @@ async function submitForm() {
             class="glass rounded-2xl overflow-hidden reveal interactive"
             style="border:1px solid rgba(245,158,11,0.16)"
           >
-            <a :href="project.githubUrl" target="_blank" rel="noopener noreferrer" class="block">
+            <a :href="project.liveUrl" target="_blank" rel="noopener noreferrer" class="block">
               <img
                 :src="project.previewUrl"
                 :alt="`${project.fullName} preview`"
@@ -823,7 +824,15 @@ async function submitForm() {
             </a>
             <div class="p-5 sm:p-6">
               <div class="flex items-start justify-between gap-3 mb-3">
-                <h3 class="text-lg font-bold leading-tight" style="color:#fef3c7">{{ project.name }}</h3>
+                <a
+                  :href="project.liveUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-lg font-bold leading-tight interactive"
+                  style="color:#fef3c7"
+                >
+                  {{ project.name }}
+                </a>
                 <span class="text-xs px-2 py-1 rounded-full flex-shrink-0" style="color:#fbbf24;background:rgba(245,158,11,0.12)">★ {{ project.stars }}</span>
               </div>
               <p class="text-sm leading-relaxed mb-4" style="color:#a78060">{{ project.description }}</p>
@@ -844,23 +853,24 @@ async function submitForm() {
                 <span style="color:#6b5040">{{ t('projects.updated', { date: formatProjectDate(project.updatedAt) }) }}</span>
                 <div class="flex items-center gap-2">
                   <a
-                    :href="project.githubUrl"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="px-3 py-1.5 rounded-lg font-semibold interactive"
-                    style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25)"
-                  >
-                    {{ t('projects.cta_github') }}
-                  </a>
-                  <a
-                    v-if="project.homepage"
-                    :href="project.homepage"
+                    :href="project.liveUrl"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="px-3 py-1.5 rounded-lg font-semibold interactive"
                     style="background:rgba(124,58,237,0.12);color:#c4b5fd;border:1px solid rgba(124,58,237,0.24)"
                   >
                     {{ t('projects.cta_live') }}
+                  </a>
+                  <a
+                    :href="project.githubUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="w-8 h-8 inline-flex items-center justify-center rounded-lg interactive"
+                    style="background:rgba(245,158,11,0.08);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)"
+                    :aria-label="`GitHub repository for ${project.fullName}`"
+                    title="GitHub repository"
+                  >
+                    <i class="pi pi-github text-sm" />
                   </a>
                 </div>
               </div>
