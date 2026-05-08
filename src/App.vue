@@ -290,6 +290,14 @@ function formatProjectDate(updatedAt: string): string {
   return new Intl.DateTimeFormat(locale.value, { month: 'short', day: 'numeric', year: 'numeric' }).format(date)
 }
 
+function onProjectPreviewError(event: Event, fullName: string): void {
+  const img = event.target as HTMLImageElement | null
+  if (!img) return
+  const fallbackSrc = `https://opengraph.githubassets.com/1/${fullName}`
+  if (img.src === fallbackSrc) return
+  img.src = fallbackSrc
+}
+
 // ── 3D card tilt ──────────────────────────────────────────────────────────────
 interface CardTilt { rx: number; ry: number }
 
@@ -820,6 +828,7 @@ async function submitForm() {
                 :alt="`${project.fullName} preview`"
                 loading="lazy"
                 class="w-full h-44 object-cover"
+                @error="onProjectPreviewError($event, project.fullName)"
               >
             </a>
             <div class="p-5 sm:p-6">
