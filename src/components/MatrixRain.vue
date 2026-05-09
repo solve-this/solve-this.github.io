@@ -23,7 +23,7 @@
         font-size: 0.85rem;
         letter-spacing: 0.5em;
         color: rgba(251,191,36,0.55);
-      ">ENTERING THE MATRIX</p>
+      ">{{ t('matrix.entering') }}</p>
     </div>
 
     <!-- skip button -->
@@ -45,7 +45,7 @@
           cursor: pointer;
         "
       >
-        SKIP [ ESC ]
+        {{ t('matrix.skip') }}
       </button>
     </Transition>
   </div>
@@ -53,8 +53,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const emit = defineEmits<{ complete: [] }>()
+const { t } = useI18n({ useScope: 'global' })
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const fading = ref(false)
