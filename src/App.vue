@@ -207,7 +207,7 @@ const services = computed(() => [
     icon: 'pi pi-database',
     title: t('services.llm_title'),
     description: t('services.llm_description'),
-    tags: ['LoRA / QLoRA', 'RLHF', 'PEFT', 'DPO'],
+    tags: [t('services.tag_lora_qlora'), t('services.tag_rlhf'), t('services.tag_peft'), t('services.tag_dpo')],
     borderColor: 'rgba(245,158,11,0.35)',
     iconBg: 'rgba(245,158,11,0.12)',
     iconColor: '#f59e0b',
@@ -219,7 +219,7 @@ const services = computed(() => [
     icon: 'pi pi-sitemap',
     title: t('services.agentic_title'),
     description: t('services.agentic_description'),
-    tags: ['LangGraph', 'AutoGen', 'CrewAI'],
+    tags: [t('services.tag_langgraph'), t('services.tag_autogen'), t('services.tag_crewai')],
     borderColor: 'rgba(124,58,237,0.35)',
     iconBg: 'rgba(124,58,237,0.12)',
     iconColor: '#a78bfa',
@@ -231,7 +231,7 @@ const services = computed(() => [
     icon: 'pi pi-search',
     title: t('services.rag_title'),
     description: t('services.rag_description'),
-    tags: ['Vector DBs', 'Hybrid Search', 'Reranking'],
+    tags: [t('services.tag_vector_dbs'), t('services.tag_hybrid_search'), t('services.tag_reranking')],
     borderColor: 'rgba(190,24,93,0.35)',
     iconBg: 'rgba(190,24,93,0.1)',
     iconColor: '#fb7185',
@@ -243,7 +243,7 @@ const services = computed(() => [
     icon: 'pi pi-chart-line',
     title: t('services.strategy_title'),
     description: t('services.strategy_description'),
-    tags: ['Architecture Review', 'Cost Optimization', 'MLOps'],
+    tags: [t('services.tag_architecture_review'), t('services.tag_cost_optimization'), t('services.tag_mlops')],
     borderColor: 'rgba(234,88,12,0.35)',
     iconBg: 'rgba(234,88,12,0.1)',
     iconColor: '#fb923c',
@@ -255,7 +255,7 @@ const services = computed(() => [
     icon: 'pi pi-shield',
     title: t('services.safety_title'),
     description: t('services.safety_description'),
-    tags: ['Guardrails', 'Red-teaming', 'Compliance'],
+    tags: [t('services.tag_guardrails'), t('services.tag_red_teaming'), t('services.tag_compliance')],
     borderColor: 'rgba(217,119,6,0.35)',
     iconBg: 'rgba(217,119,6,0.1)',
     iconColor: '#fcd34d',
@@ -329,7 +329,20 @@ const expertise = computed(() => [
   { label: t('expertise.skill_multimodal'), level: 88 },
   { label: t('expertise.skill_ai_security'), level: 85 },
 ])
-const techStack = ['PyTorch','HuggingFace','LangChain','LangGraph','OpenAI','Anthropic','Pinecone','Weaviate','FastAPI','Kubernetes','Ray','MLflow']
+const techStackItems = computed(() => [
+  t('expertise.tech_pytorch'),
+  t('expertise.tech_huggingface'),
+  t('expertise.tech_langchain'),
+  t('expertise.tech_langgraph'),
+  t('expertise.tech_openai'),
+  t('expertise.tech_anthropic'),
+  t('expertise.tech_pinecone'),
+  t('expertise.tech_weaviate'),
+  t('expertise.tech_fastapi'),
+  t('expertise.tech_kubernetes'),
+  t('expertise.tech_ray'),
+  t('expertise.tech_mlflow'),
+])
 
 // ── Why props ────────────────────────────────────────────────────────────────
 const whyProps = computed(() => [
@@ -419,11 +432,11 @@ async function sendToWebhook(payload: ContactPayload): Promise<'sent' | 'skipped
     return 'sent'
   } catch (err) {
     if (err instanceof TypeError) {
-      lastSubmitError.value = err.message || 'Network error occurred'
+      lastSubmitError.value = err.message || t('contact.error_network')
     } else if (err instanceof Error) {
-      lastSubmitError.value = err.message || 'Request failed'
+      lastSubmitError.value = err.message || t('contact.error_request_failed')
     } else {
-      lastSubmitError.value = 'Request failed'
+      lastSubmitError.value = t('contact.error_request_failed')
     }
     return 'failed'
   }
@@ -536,7 +549,7 @@ async function submitForm() {
               option-value="value"
               @update:model-value="switchLocale"
               class="lang-select interactive"
-              aria-label="Select language"
+              :aria-label="t('nav.select_language')"
             >
               <template #value="{ value }">
                 <span class="flex items-center gap-1">
@@ -564,7 +577,7 @@ async function submitForm() {
             class="md:hidden p-2 rounded-lg transition-colors interactive"
             style="color:#a78060"
             @click="mobileMenuOpen = !mobileMenuOpen"
-            aria-label="Toggle menu"
+            :aria-label="t('nav.toggle_menu')"
           >
             <i :class="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'" class="text-lg" />
           </button>
@@ -597,7 +610,7 @@ async function submitForm() {
                 option-value="value"
                 @update:model-value="switchLocale"
                 class="lang-select lang-select-mobile interactive"
-                aria-label="Select language"
+                :aria-label="t('nav.select_language')"
               >
                 <template #value="{ value }">
                   <span class="flex items-center gap-1">
@@ -825,7 +838,7 @@ async function submitForm() {
             <a :href="project.liveUrl" target="_blank" rel="noopener noreferrer" class="block">
               <img
                 :src="project.previewUrl"
-                :alt="`${project.fullName} preview`"
+                :alt="t('projects.preview_alt', { name: project.fullName })"
                 loading="lazy"
                 class="w-full h-44 object-cover"
                 @error="onProjectPreviewError($event, project.fullName)"
@@ -876,8 +889,8 @@ async function submitForm() {
                     rel="noopener noreferrer"
                     class="w-8 h-8 inline-flex items-center justify-center rounded-lg interactive"
                     style="background:rgba(245,158,11,0.08);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)"
-                    :aria-label="`GitHub repository for ${project.fullName}`"
-                    title="GitHub repository"
+                    :aria-label="t('projects.github_repo_aria', { name: project.fullName })"
+                    :title="t('projects.github_title')"
                   >
                     <i class="pi pi-github text-sm" />
                   </a>
@@ -940,7 +953,7 @@ async function submitForm() {
               <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">{{ t('expertise.our_tech_stack') }}</h3>
               <div class="flex flex-wrap gap-2.5">
                 <span
-                  v-for="tech in techStack"
+                  v-for="tech in techStackItems"
                   :key="tech"
                   class="px-3.5 py-2 rounded-xl text-sm font-medium glass border transition-all duration-200 interactive"
                   style="color:#c8a070;border-color:rgba(120,80,40,0.35)"
@@ -970,7 +983,7 @@ async function submitForm() {
         <div class="mt-20 relative overflow-hidden">
           <div class="flex gap-8 marquee whitespace-nowrap">
             <span
-              v-for="(tech, i) in [...techStack, ...techStack]"
+              v-for="(tech, i) in [...techStackItems, ...techStackItems]"
               :key="'m-' + i"
               class="inline-flex items-center gap-2 text-sm font-medium"
               style="color:rgba(120,80,40,0.5)"
