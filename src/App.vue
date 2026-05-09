@@ -536,7 +536,7 @@ async function submitForm() {
               option-value="value"
               @update:model-value="switchLocale"
               class="lang-select interactive"
-              aria-label="Select language"
+              :aria-label="t('nav.select_language')"
             >
               <template #value="{ value }">
                 <span class="flex items-center gap-1">
@@ -564,7 +564,7 @@ async function submitForm() {
             class="md:hidden p-2 rounded-lg transition-colors interactive"
             style="color:#a78060"
             @click="mobileMenuOpen = !mobileMenuOpen"
-            aria-label="Toggle menu"
+            :aria-label="t('nav.toggle_menu')"
           >
             <i :class="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'" class="text-lg" />
           </button>
@@ -597,7 +597,7 @@ async function submitForm() {
                 option-value="value"
                 @update:model-value="switchLocale"
                 class="lang-select lang-select-mobile interactive"
-                aria-label="Select language"
+                :aria-label="t('nav.select_language')"
               >
                 <template #value="{ value }">
                   <span class="flex items-center gap-1">
@@ -825,7 +825,7 @@ async function submitForm() {
             <a :href="project.liveUrl" target="_blank" rel="noopener noreferrer" class="block">
               <img
                 :src="project.previewUrl"
-                :alt="`${project.fullName} preview`"
+                :alt="t('projects.preview_alt', { name: project.fullName })"
                 loading="lazy"
                 class="w-full h-44 object-cover"
                 @error="onProjectPreviewError($event, project.fullName)"
@@ -876,8 +876,8 @@ async function submitForm() {
                     rel="noopener noreferrer"
                     class="w-8 h-8 inline-flex items-center justify-center rounded-lg interactive"
                     style="background:rgba(245,158,11,0.08);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)"
-                    :aria-label="`GitHub repository for ${project.fullName}`"
-                    title="GitHub repository"
+                    :aria-label="t('projects.github_repo_aria', { name: project.fullName })"
+                    :title="t('projects.github_title')"
                   >
                     <i class="pi pi-github text-sm" />
                   </a>

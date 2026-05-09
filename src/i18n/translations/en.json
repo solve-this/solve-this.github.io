@@ -119,6 +119,11 @@
     "footer.tagline": "Elite AI Engineering",
     "footer.copyright": "© 2025 solve.this. All rights reserved.",
     "meta.title": "solve.this — Elite AI Engineering",
-    "meta.description": "solve.this — Elite AI Engineering Collective. We architect production-grade LLM fine-tuning, agentic workflows, and RAG systems."
+    "meta.description": "solve.this — Elite AI Engineering Collective. We architect production-grade LLM fine-tuning, agentic workflows, and RAG systems.",
+    "nav.select_language": "Select language",
+    "nav.toggle_menu": "Toggle menu",
+    "projects.github_title": "GitHub repository",
+    "projects.github_repo_aria": "GitHub repository for {name}",
+    "projects.preview_alt": "{name} preview"
   }
 }
