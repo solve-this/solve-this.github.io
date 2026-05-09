@@ -329,7 +329,7 @@ const expertise = computed(() => [
   { label: t('expertise.skill_multimodal'), level: 88 },
   { label: t('expertise.skill_ai_security'), level: 85 },
 ])
-const techStack = computed(() => [
+const techStackItems = computed(() => [
   t('expertise.tech_pytorch'),
   t('expertise.tech_huggingface'),
   t('expertise.tech_langchain'),
@@ -953,7 +953,7 @@ async function submitForm() {
               <h3 class="font-bold mb-5" style="color:#fef3c7;font-size:1.1rem">{{ t('expertise.our_tech_stack') }}</h3>
               <div class="flex flex-wrap gap-2.5">
                 <span
-                  v-for="tech in techStack"
+                  v-for="tech in techStackItems"
                   :key="tech"
                   class="px-3.5 py-2 rounded-xl text-sm font-medium glass border transition-all duration-200 interactive"
                   style="color:#c8a070;border-color:rgba(120,80,40,0.35)"
@@ -983,7 +983,7 @@ async function submitForm() {
         <div class="mt-20 relative overflow-hidden">
           <div class="flex gap-8 marquee whitespace-nowrap">
             <span
-              v-for="(tech, i) in [...techStack, ...techStack]"
+              v-for="(tech, i) in [...techStackItems, ...techStackItems]"
               :key="'m-' + i"
               class="inline-flex items-center gap-2 text-sm font-medium"
               style="color:rgba(120,80,40,0.5)"
