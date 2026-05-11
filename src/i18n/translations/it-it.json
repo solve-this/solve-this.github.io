@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che è necessario",
@@ -37,7 +47,7 @@
     "expertise.heading": "Costruito da",
     "expertise.heading_highlight": "Esperti",
     "expertise.heading_suffix": "Non ingegneri tempestivi",
-    "expertise.description": "Una solida preparazione in ambito di ricerca, l'esperienza maturata sul campo e un'ossessione per la perfezione.",
+    "expertise.description": "Una solida preparazione in ambito di ricerca, l'esperienza maturata sul campo e la mania di fare le cose per bene.",
     "expertise.core_competencies": "Competenze chiave",
     "expertise.our_tech_stack": "Il nostro team di tecnici",
     "expertise.why_title": "Perché risolvere questo problema?",
@@ -79,7 +89,7 @@
     "contact.service_rag": "Architettura RAG",
     "contact.service_strategy": "Strategia e audit sull'IA",
     "contact.service_safety": "Sicurezza e allineamento dell'IA",
-    "contact.service_other": "Altro / Non ancora sicuro",
+    "contact.service_other": "Altro / Non sono ancora sicuro",
     "footer.tagline": "Ingegneria dell'IA d'élite",
     "footer.copyright": "© 2025 solve.this. Tutti i diritti riservati.",
     "meta.title": "solve.this — Ingegneria dell'IA d'élite",
@@ -110,15 +120,5 @@
     "projects.cta_github": "#ERROR!",
     "projects.cta_live": "#ERROR!",
     "projects.empty": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }

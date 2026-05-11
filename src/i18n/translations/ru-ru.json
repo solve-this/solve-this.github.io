@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "мы решаем то, что необходимо",
@@ -37,7 +47,7 @@
     "expertise.heading": "Построено",
     "expertise.heading_highlight": "Эксперты",
     "expertise.heading_suffix": "Неоперативные инженеры",
-    "expertise.description": "Глубокие знания в области научных исследований, производственный опыт и одержимость стремлением сделать все идеально.",
+    "expertise.description": "Глубокие знания в области научных исследований, производственный опыт и одержимость стремлением к совершенству.",
     "expertise.core_competencies": "Основные компетенции",
     "expertise.our_tech_stack": "Наш технологический стек",
     "expertise.why_title": "Зачем это решать?",
@@ -89,7 +99,7 @@
     "nav.contact": "Контакт",
     "nav.get_started": "Начать",
     "theme.toggle_dark": "Переключиться в темный режим",
-    "theme.toggle_light": "Переключитесь в светлый режим",
+    "theme.toggle_light": "Переключиться в светлый режим",
     "toast.summary": "Сообщение получено",
     "toast.detail": "Мы свяжемся с вами в течение 24 часов.",
     "contact.toast_sheet_success": "#ERROR!",
@@ -110,15 +120,5 @@
     "projects.cta_github": "#ERROR!",
     "projects.cta_live": "#ERROR!",
     "projects.empty": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }

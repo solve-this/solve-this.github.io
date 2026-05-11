@@ -1,4 +1,14 @@
 {
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
+  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "rozwiązujemy to co jest potrzebne",
@@ -54,7 +64,7 @@
     "contact.badge": "Budujmy razem",
     "contact.heading": "Gotowe do wysyłki",
     "contact.heading_highlight": "Prawdziwa sztuczna inteligencja",
-    "contact.description": "Opowiedz nam o swoim problemie. Odpowiemy w ciągu 24 godzin, przedstawiając ocenę techniczną – bez ogólnikowej oferty sprzedaży, tylko bezpośrednia analiza techniczna.",
+    "contact.description": "Opowiedz nam o swoim problemie. Odpowiemy w ciągu 24 godzin, przedstawiając ocenę techniczną – bez ogólnikowej oferty handlowej, tylko bezpośrednia analiza techniczna.",
     "contact.signal_consultation": "Bezpłatna wstępna konsultacja techniczna",
     "contact.signal_nda": "NDA podpisano przed jakąkolwiek dyskusją",
     "contact.signal_contract": "Kontrakty milowe o stałej cenie",
@@ -69,7 +79,7 @@
     "contact.form_email_placeholder": "ada@company.ai",
     "contact.form_company_placeholder": "Acme Corp",
     "contact.form_service_placeholder": "Wybierz usługę...",
-    "contact.form_message_placeholder": "Opisz swoje wyzwanie w zakresie sztucznej inteligencji, obecny stos rozwiązań i harmonogram...",
+    "contact.form_message_placeholder": "Opisz swoje wyzwanie w zakresie sztucznej inteligencji, obecny zestaw narzędzi i harmonogram...",
     "contact.form_submit": "Wyślij streszczenie projektu",
     "contact.form_privacy": "Wysyłając wiadomość, wyrażasz zgodę na naszą politykę prywatności. Nigdy nie wysyłaj spamu.",
     "contact.success_title": "Wiadomość wysłana!",
@@ -87,7 +97,7 @@
     "nav.services": "Usługi",
     "nav.expertise": "Ekspertyza",
     "nav.contact": "Kontakt",
-    "nav.get_started": "Zacznij",
+    "nav.get_started": "Rozpocznij",
     "theme.toggle_dark": "Przełącz na tryb ciemny",
     "theme.toggle_light": "Przełącz na tryb światła",
     "toast.summary": "Wiadomość otrzymana",
@@ -110,15 +120,5 @@
     "projects.cta_github": "#ERROR!",
     "projects.cta_live": "#ERROR!",
     "projects.empty": "#ERROR!"
-  },
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
   }
 }
