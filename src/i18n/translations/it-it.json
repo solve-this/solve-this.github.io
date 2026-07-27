@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "risolviamo ciò che è necessario",
@@ -47,7 +37,7 @@
     "expertise.heading": "Costruito da",
     "expertise.heading_highlight": "Esperti",
     "expertise.heading_suffix": "Non ingegneri tempestivi",
-    "expertise.description": "Una solida preparazione in ambito di ricerca, l'esperienza maturata sul campo e un'ossessione per la perfezione.",
+    "expertise.description": "Una solida preparazione in ambito di ricerca, l'esperienza maturata sul campo e la mania di fare le cose per bene.",
     "expertise.core_competencies": "Competenze chiave",
     "expertise.our_tech_stack": "Il nostro team di tecnici",
     "expertise.why_title": "Perché risolvere questo problema?",
@@ -120,5 +110,15 @@
     "projects.cta_github": "#ERROR!",
     "projects.cta_live": "#ERROR!",
     "projects.empty": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }

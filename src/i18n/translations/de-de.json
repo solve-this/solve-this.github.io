@@ -1,14 +1,4 @@
 {
-  "i18n": {
-    "en-us": "English",
-    "de-de": "Deutsch",
-    "pl-pl": "Polski",
-    "fr-fr": "Français",
-    "ru-ru": "Pусский",
-    "tr-tr": "Türkçe",
-    "es-es": "Español",
-    "it-it": "Italiano"
-  },
   "landingPage": {
     "page_title": "solve-this",
     "page_description": "Wir lösen das, was nötig ist",
@@ -26,7 +16,7 @@
     "hero.cta_secondary": "Services entdecken",
     "hero.scroll": "Scrollen",
     "hero.stat_production_ai": "Produktionssysteme für KI",
-    "hero.stat_tokens_daily": "Täglich werden Token verarbeitet",
+    "hero.stat_tokens_daily": "Tägliche Token-Verarbeitung",
     "hero.stat_uptime": "Verfügbarkeits-SLA",
     "hero.stat_latency": "Durchschnittliche Inferenzlatenz",
     "services.badge": "Was wir bauen",
@@ -47,7 +37,7 @@
     "expertise.heading": "Erstellt von",
     "expertise.heading_highlight": "Experten",
     "expertise.heading_suffix": "Nicht pünktliche Ingenieure",
-    "expertise.description": "Tiefgreifende Forschungserfahrung, Produktionsfehler und die Besessenheit, alles richtig zu machen.",
+    "expertise.description": "Fundierte Forschungserfahrung, Produktionserfahrung und der unbedingte Wille, alles richtig zu machen.",
     "expertise.core_competencies": "Kernkompetenzen",
     "expertise.our_tech_stack": "Unser Technologie-Stack",
     "expertise.why_title": "Warum sollte man das lösen?",
@@ -120,5 +110,15 @@
     "projects.cta_github": "#ERROR!",
     "projects.cta_live": "#ERROR!",
     "projects.empty": "#ERROR!"
+  },
+  "i18n": {
+    "en-us": "English",
+    "de-de": "Deutsch",
+    "pl-pl": "Polski",
+    "fr-fr": "Français",
+    "ru-ru": "Pусский",
+    "tr-tr": "Türkçe",
+    "es-es": "Español",
+    "it-it": "Italiano"
   }
 }
