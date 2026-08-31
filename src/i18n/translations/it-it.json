@@ -38,7 +38,7 @@
     "services.agentic_title": "Flussi di lavoro agentici",
     "services.agentic_description": "Sistemi di orchestrazione multi-agente in grado di ragionare, pianificare ed eseguire autonomamente processi aziendali complessi.",
     "services.rag_title": "Architettura RAG",
-    "services.rag_description": "Sistemi di generazione aumentata per il recupero di informazioni di livello aziendale, che combinano la ricerca semantica con il recupero ibrido per un'intelligence priva di allucinazioni.",
+    "services.rag_description": "Sistemi di generazione aumentata per il recupero di informazioni di livello aziendale che combinano la ricerca semantica con il recupero ibrido per un'intelligence priva di allucinazioni.",
     "services.strategy_title": "Strategia e audit sull'IA",
     "services.strategy_description": "Dalla fase di proof-of-concept alla produzione. Analizziamo la tua infrastruttura di intelligenza artificiale e ti forniamo una roadmap per un'intelligenza scalabile.",
     "services.safety_title": "Sicurezza e allineamento dell'IA",
